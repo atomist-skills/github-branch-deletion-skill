@@ -24,9 +24,9 @@ import {
     apiUrl,
     gitHub,
 } from "./github";
-import { ConvergePullRequestAutoMergeLabelsSubscription } from "./types";
+import { ConvergePullRequestBranchDeletionLabelSubscription } from "./types";
 
-export const handler: EventHandler<ConvergePullRequestAutoMergeLabelsSubscription> = async ctx => {
+export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscription> = async ctx => {
     const repo = ctx.data.PullRequest[0].repo;
     const { owner, name } = repo;
     const credentials = await ctx.credential.resolve<GitHubAppCredential>(gitHubAppToken({ owner, repo: name }));

@@ -1,4 +1,4 @@
-subscription ConvergePullRequestAutoMergeLabels {
+subscription ConvergePullRequestBranchDeletionLabel{
     PullRequest {
         action
         repo {
