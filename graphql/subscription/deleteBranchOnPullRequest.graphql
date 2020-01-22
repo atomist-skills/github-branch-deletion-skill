@@ -1,0 +1,18 @@
+subscription DeleteBranchOnPullRequest {
+    PullRequest(actions: [closed]) {
+        number
+        branchName
+        repo {
+            owner
+            name
+            org {
+                provider {
+                    apiUrl
+                }
+            }
+        }
+        labels(name: "auto-branch-delete:on-close") @required {
+            name
+        }
+    }
+}
