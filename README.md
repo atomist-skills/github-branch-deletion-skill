@@ -1,28 +1,19 @@
-# `@atomist/github-auto-merge-skill`
+# `@atomist/github-branch-deletion-skill`
 
-Atomist Skill to automatically merge Pull Requests on GitHub based on assigned labels.
+Atomist Skill to automatically delete pull request branches when the PR gets closed.
 
 ## Usage
 
-### Enable Auto-Merge
+### Enable Branch Deletion
 
 To enable auto-merging, one the following labels has to be assigned to the pull request:
 
- * `auto-merge:on-approve` triggers auto-merge if all requested reviews are approved and all status checks are green
- * `auto-merge:on-check-success` triggers auto-merge if all status checks are green 
+ * `auto-branch-delete:on-close` deletes head branch when the PR gets closed
 
-### Specify Merge Method
-
-To specify the desired merge method, one of the following optional labels can be used:
-
- * `auto-merge-method:merge`
- * `auto-merge-method:rebase`
- * `auto-merge-method:squash`
- 
 ### Label Management
 
-The labels are automatically added to and removed from the repository depending on its settings.
-E.g. disabling the _rebase_ merge method will automatically remove the label.
+The label is automatically added to the repository when this skill gets enabled and PRs
+are created.
 
 ---
 
