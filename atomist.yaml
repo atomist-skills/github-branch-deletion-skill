@@ -16,17 +16,17 @@
     
 skill:
   name: "@atomist/github-branch-deletion-skill"
-  title: GitHub Branch Deletion Skill
-  version: 0.1.1
+  title: GitHub Branch auto-deletion
+  version: 0.2.0
   author: Atomist
   description: |
-    Atomist Skill to automatically delete pull request branches when the PR gets closed
+    Automatically delete pull request branches when the PR gets closed
   category:
     - productivity
   license: Apache-2.0
   homepage: https://github.com/atomist-skills/github-branch-deletion-skill
   repository: https://github.com/atomist-skills/github-branch-deletion.git
-  icon: https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/npm-512.png
+  icon: https://images.atomist.com/rug/merged.png
 
   package:
     - use: '@atomist/package-sdm-skill/package'
