@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@atomist/skill": "0.1.0-master.20200122123050",
+    "@atomist/skill": "0.1.0-master.20200123095811",
     "@octokit/rest": "^16.37.0"
   },
   "devDependencies": {
