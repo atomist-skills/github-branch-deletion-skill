@@ -16,7 +16,6 @@
 
 import { EventHandler } from "@atomist/skill/lib/handler";
 import {
-    GitHubAppCredential,
     gitHubAppToken,
 } from "@atomist/skill/lib/secrets";
 import * as Octokit from "@octokit/rest";
@@ -29,7 +28,7 @@ import { ConvergePullRequestBranchDeletionLabelSubscription } from "./types";
 export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscription> = async ctx => {
     const repo = ctx.data.PullRequest[0].repo;
     const { owner, name } = repo;
-    const credentials = await ctx.credential.resolve<GitHubAppCredential>(gitHubAppToken({ owner, repo: name }));
+    const credentials = await ctx.credential.resolve(gitHubAppToken({ owner, repo: name }));
 
     const api = gitHub(credentials.token, apiUrl(repo));
 
