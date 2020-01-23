@@ -19,7 +19,7 @@ skill:
   title: GitHub Branch auto-deletion
   version: 0.2.0
   author: Atomist
-  description: |
+  description: |-
     Automatically delete pull request branches when the PR gets closed
   category:
     - productivity
