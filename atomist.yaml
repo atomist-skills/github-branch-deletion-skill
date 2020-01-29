@@ -15,7 +15,7 @@
 # 
     
 skill:
-  name: "@atomist/github-branch-deletion-skill"
+  name: "atomist/github-branch-deletion-skill"
   title: GitHub Branch auto-deletion
   version: 0.2.1
   author: Atomist
@@ -29,7 +29,7 @@ skill:
   icon: https://images.atomist.com/rug/merged.png
 
   package:
-    - use: '@atomist/package-sdm-skill/package'
+    - use: 'atomist/package-sdm-skill/package'
       parameters:
         main: 'node_modules/@atomist/skill/lib/function.js'
 
