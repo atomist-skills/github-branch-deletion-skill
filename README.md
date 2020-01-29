@@ -1,4 +1,4 @@
-# `@atomist/github-branch-deletion-skill`
+# `atomist/github-branch-deletion-skill`
 
 Atomist Skill to automatically delete pull request branches when the PR gets closed.
 
