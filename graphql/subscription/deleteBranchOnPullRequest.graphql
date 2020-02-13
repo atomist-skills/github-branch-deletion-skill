@@ -1,5 +1,6 @@
 subscription DeleteBranchOnPullRequest {
     PullRequest(actions: [closed]) {
+        merged
         number
         branchName
         repo {
@@ -11,8 +12,8 @@ subscription DeleteBranchOnPullRequest {
                 }
             }
         }
-        labels(name: "auto-branch-delete:on-close") @required {
-            name
+        labels @required {
+            name @matches(re: "^auto-branch-delete:.*$")
         }
     }
 }

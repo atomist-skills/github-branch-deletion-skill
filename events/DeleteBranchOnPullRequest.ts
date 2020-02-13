@@ -5,9 +5,18 @@ import {
 import { gitHub } from "./github";
 import { DeleteBranchOnPullRequestSubscription } from "./types";
 
-export const handler: EventHandler<DeleteBranchOnPullRequestSubscription> = async ctx => {
+export interface DeleteBranchConfiguration {
+    deleteOn?: "on-close" | "on-merge";
+}
+
+export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, DeleteBranchConfiguration> = async ctx => {
     const pr = ctx.data.PullRequest[0];
     const { owner, name, org } = pr.repo;
+
+    if ((ctx.configuration?.parameters?.deleteOn || "on-merge") === "on-merge" && !pr.merged) {
+        return;
+    }
+
     const credential = await ctx.credential.resolve(gitHubAppToken({ owner, repo: name, apiUrl: org.provider.apiUrl }));
     if (!!credential) {
         const api = gitHub(credential.token, org.provider.apiUrl);

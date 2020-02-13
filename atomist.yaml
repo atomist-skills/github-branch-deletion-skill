@@ -38,3 +38,22 @@ skill:
     memory: 1024
     name: nodejs10
     entry_point: entryPoint
+
+parameters:
+  - repo_filter:
+      name: repos
+      display_name: Repositories
+      description: Select for which repositories pull request branches should automatically get deleted
+      required: false
+  - single_choice:
+      name: deleteOn
+      display_name: Default Auto-branch Deletion Policy
+      description: |-
+        Branch deletion policy to apply when no explicit label is configured on the pull request
+      options:
+        - text: On merged PR
+          value: on-merge
+        - text: On closed PR
+          value: on-close
+      default_value: on-merge
+      required: false

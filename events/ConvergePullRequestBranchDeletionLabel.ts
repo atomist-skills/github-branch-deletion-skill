@@ -15,24 +15,33 @@
  */
 
 import { EventHandler } from "@atomist/skill/lib/handler";
-import {
-    gitHubAppToken,
-} from "@atomist/skill/lib/secrets";
+import { gitHubAppToken } from "@atomist/skill/lib/secrets";
 import * as Octokit from "@octokit/rest";
+import { DeleteBranchConfiguration } from "./DeleteBranchOnPullRequest";
 import {
     apiUrl,
     gitHub,
 } from "./github";
 import { ConvergePullRequestBranchDeletionLabelSubscription } from "./types";
 
-export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscription> = async ctx => {
-    const repo = ctx.data.PullRequest[0].repo;
+export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscription, DeleteBranchConfiguration> = async ctx => {
+    const pr = ctx.data.PullRequest[0];
+    const repo = pr.repo;
     const { owner, name } = repo;
     const credentials = await ctx.credential.resolve(gitHubAppToken({ owner, repo: name }));
 
     const api = gitHub(credentials.token, apiUrl(repo));
 
     await addLabel("auto-branch-delete:on-close", "0F2630", owner, name, api);
+    await addLabel("auto-branch-delete:on-merge", "0F2630", owner, name, api);
+
+    // Add the default labels to the PR
+    await api.issues.addLabels({
+        issue_number: pr.number,
+        owner: repo.owner,
+        repo: repo.name,
+        labels: [`auto-branch-delete:${ctx.configuration?.parameters?.deleteOn || "on-merge"}`],
+    });
 };
 
 async function addLabel(name: string,
