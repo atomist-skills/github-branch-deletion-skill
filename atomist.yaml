@@ -17,7 +17,7 @@
 skill:
   name: atomist/github-branch-deletion-skill
   title: GitHub Branch auto-deletion
-  version: 0.2.1
+  version: 1.0.0
   author: Atomist
   description: |-
     Automatically delete pull request branches when the PR gets closed
@@ -49,7 +49,7 @@ parameters:
       name: deleteOn
       display_name: Default Auto-branch Deletion Policy
       description: |-
-        Branch deletion policy to apply when no explicit label is configured on the pull request
+        Branch deletion policy to apply when no explicit label is configured on pull requests
       options:
         - text: On merged PR
           value: on-merge

@@ -8,12 +8,12 @@ Atomist Skill to automatically delete pull request branches when the PR gets clo
 
 To enable auto-merging, one the following labels has to be assigned to the pull request:
 
- * `auto-branch-delete:on-close` deletes head branch when the PR gets closed
+ * `auto-branch-delete:on-close` deletes head branch when the PR gets closed regardless of its merge status
+ * `auto-branch-delete:on-merge` deletes head branch when the PR gets merged
 
 ### Label Management
 
-The label is automatically added to the repository when this skill gets enabled and PRs
-are created.
+The labels are automatically added to the repository when this skill gets enabled and PRs are created.
 
 ---
 
