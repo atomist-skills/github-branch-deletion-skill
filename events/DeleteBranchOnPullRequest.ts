@@ -13,21 +13,39 @@ export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, Delete
     const pr = ctx.data.PullRequest[0];
     const { owner, name, org } = pr.repo;
 
-    if ((ctx.configuration?.parameters?.deleteOn || "on-merge") === "on-merge" && !pr.merged) {
-        return;
+    let deletePr = false;
+    if (!!pr.merged && pr.labels.some(l => l.name === "")) {
+        deletePr = true;
+    } else if (pr.labels.some(l => l.name === "")) {
+        deletePr = true;
     }
 
-    const credential = await ctx.credential.resolve(gitHubAppToken({ owner, repo: name, apiUrl: org.provider.apiUrl }));
-    if (!!credential) {
-        const api = gitHub(credential.token, org.provider.apiUrl);
-        try {
-            await api.git.deleteRef({
-                owner: pr.repo.owner,
-                repo: pr.repo.name,
-                ref: `heads/${pr.branchName}`,
-            });
-        } catch (e) {
-            console.warn(`Failed to delete branch: ${e.message}`);
+    if (deletePr) {
+        const credential = await ctx.credential.resolve(gitHubAppToken({ owner, repo: name, apiUrl: org.provider.apiUrl }));
+        if (!!credential) {
+            const api = gitHub(credential.token, org.provider.apiUrl);
+            try {
+                await api.git.deleteRef({
+                    owner: pr.repo.owner,
+                    repo: pr.repo.name,
+                    ref: `heads/${pr.branchName}`,
+                });
+                return {
+                    code: 0,
+                    reason: `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} branch ${pr.branchName} deleted`,
+                };
+            } catch (e) {
+                console.warn(`Failed to delete branch: ${e.message}`);
+                return {
+                    code: 0,
+                    reason: `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} branch ${pr.branchName} failed to delete`,
+                };
+            }
         }
     }
+
+    return {
+        code: 0,
+        reason: `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} branch deletion not requested`,
+    };
 };
