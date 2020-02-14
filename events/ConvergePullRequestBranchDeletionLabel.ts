@@ -42,6 +42,11 @@ export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscri
         repo: repo.name,
         labels: [`auto-branch-delete:${ctx.configuration?.parameters?.deleteOn || "on-merge"}`],
     });
+
+    return {
+        code: 0,
+        reason: `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} labelled with branch deletion label`,
+    };
 };
 
 async function addLabel(name: string,
