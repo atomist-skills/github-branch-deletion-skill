@@ -16,7 +16,7 @@
     
 skill:
   name: atomist/github-branch-deletion-skill
-  title: Branch auto-deletion
+  title: Auto-delete pull request branch
   version: 1.1.0
   author: Atomist
   description: |-
