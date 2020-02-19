@@ -16,8 +16,8 @@
     
 skill:
   name: atomist/github-branch-deletion-skill
-  title: GitHub Branch auto-deletion
-  version: 1.0.5
+  title: Branch auto-deletion
+  version: 1.1.0
   author: Atomist
   description: |-
     Automatically delete pull request branches when the PR gets closed
@@ -26,7 +26,6 @@ skill:
   license: Apache-2.0
   homepage: https://github.com/atomist-skills/github-branch-deletion-skill
   repository: https://github.com/atomist-skills/github-branch-deletion.git
-  #icon: https://images.atomist.com/rug/merged.png
   icon: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTYwIiB2aWV3Qm94PSIwIDAgMTAgMTYiPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTEwIDVjMC0xLjExLS44OS0yLTItMmExLjk5MyAxLjk5MyAwIDAgMC0xIDMuNzJ2LjNjLS4wMi41Mi0uMjMuOTgtLjYzIDEuMzgtLjQuNC0uODYuNjEtMS4zOC42My0uODMuMDItMS40OC4xNi0yIC40NVY0LjcyYTEuOTkzIDEuOTkzIDAgMCAwLTEtMy43MkMuODggMSAwIDEuODkgMCAzYTIgMiAwIDAgMCAxIDEuNzJ2Ni41NmMtLjU5LjM1LTEgLjk5LTEgMS43MiAwIDEuMTEuODkgMiAyIDIgMS4xMSAwIDItLjg5IDItMiAwLS41My0uMi0xLS41My0xLjM2LjA5LS4wNi40OC0uNDEuNTktLjQ3LjI1LS4xMS41Ni0uMTcuOTQtLjE3IDEuMDUtLjA1IDEuOTUtLjQ1IDIuNzUtMS4yNVM4Ljk1IDcuNzcgOSA2LjczaC0uMDJDOS41OSA2LjM3IDEwIDUuNzMgMTAgNXpNMiAxLjhjLjY2IDAgMS4yLjU1IDEuMiAxLjIgMCAuNjUtLjU1IDEuMi0xLjIgMS4yQzEuMzUgNC4yLjggMy42NS44IDNjMC0uNjUuNTUtMS4yIDEuMi0xLjJ6bTAgMTIuNDFjLS42NiAwLTEuMi0uNTUtMS4yLTEuMiAwLS42NS41NS0xLjIgMS4yLTEuMi42NSAwIDEuMi41NSAxLjIgMS4yIDAgLjY1LS41NSAxLjItMS4yIDEuMnptNi04Yy0uNjYgMC0xLjItLjU1LTEuMi0xLjIgMC0uNjUuNTUtMS4yIDEuMi0xLjIuNjUgMCAxLjIuNTUgMS4yIDEuMiAwIC42NS0uNTUgMS4yLTEuMiAxLjJ6Ii8+PC9zdmc+
 
   package:

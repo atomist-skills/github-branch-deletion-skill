@@ -1,8 +1,10 @@
 # `atomist/github-branch-deletion-skill`
 
+<!---atomist-skill-readme:start--->
+
 Atomist Skill to automatically delete pull request branches when the PR gets closed.
 
-## Usage
+## Configuration
 
 ### Enable Branch Deletion
 
@@ -14,6 +16,8 @@ To enable auto-merging, one the following labels has to be assigned to the pull 
 ### Label Management
 
 The labels are automatically added to the repository when this skill gets enabled and PRs are created.
+
+<!---atomist-skill-readme:end--->
 
 ---
 
