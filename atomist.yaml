@@ -22,8 +22,8 @@ skill:
   description: |-
     Automatically delete pull request branches when the PR gets closed
   category:
-    - CODE_REVIEW
-    - DEV_EX
+    - code_review
+    - dev_ex
   license: Apache-2.0
   homepage: https://github.com/atomist-skills/github-branch-deletion-skill
   repository: https://github.com/atomist-skills/github-branch-deletion.git
