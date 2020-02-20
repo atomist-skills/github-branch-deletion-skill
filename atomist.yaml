@@ -41,11 +41,6 @@ skill:
     entry_point: entryPoint
 
 parameters:
-  - repo_filter:
-      name: repos
-      display_name: Repositories
-      description: Select for which repositories pull request branches should automatically get deleted
-      required: false
   - single_choice:
       name: deleteOn
       display_name: Default Auto-branch Deletion Policy
@@ -57,4 +52,9 @@ parameters:
         - text: On closed PR
           value: on-close
       default_value: on-merge
+      required: false
+  - repo_filter:
+      name: repos
+      display_name: Repositories
+      description: ''
       required: false
