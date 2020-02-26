@@ -1,5 +1,6 @@
 subscription DeleteBranchOnPullRequest {
     PullRequest(actions: [closed]) {
+        url
         merged
         number
         branchName

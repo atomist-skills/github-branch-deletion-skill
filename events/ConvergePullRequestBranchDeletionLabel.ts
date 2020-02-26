@@ -30,6 +30,8 @@ export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscri
     const { owner, name } = repo;
     const credentials = await ctx.credential.resolve(gitHubAppToken({ owner, repo: name }));
 
+    await ctx.audit.log(`Converging auto-branch deletion label`);
+
     const api = gitHub(credentials.token, apiUrl(repo));
 
     await addLabel("auto-branch-delete:on-close", "0F2630", owner, name, api);
@@ -40,6 +42,8 @@ export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscri
         labels.push(`auto-branch-delete:${ctx.configuration?.parameters?.deleteOn || "on-merge"}`);
     }
 
+    await ctx.audit.log(`Labelling pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} with configured auto-branch deletion method`);
+
     // Add the default labels to the PR
     await api.issues.addLabels({
         issue_number: pr.number,
@@ -48,9 +52,11 @@ export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscri
         labels,
     });
 
+    await ctx.audit.log(`Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} labelled with: ${labels.join(", ")}`);
+
     return {
         code: 0,
-        reason: `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} labelled with branch deletion label`,
+        reason: `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} labelled with auto-branch deletion label`,
     };
 };
 

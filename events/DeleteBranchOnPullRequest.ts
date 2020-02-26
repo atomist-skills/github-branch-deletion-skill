@@ -1,7 +1,6 @@
+import { Severity } from "@atomist/skill-logging";
 import { EventHandler } from "@atomist/skill/lib/handler";
-import {
-    gitHubAppToken,
-} from "@atomist/skill/lib/secrets";
+import { gitHubAppToken } from "@atomist/skill/lib/secrets";
 import { gitHub } from "./github";
 import { DeleteBranchOnPullRequestSubscription } from "./types";
 
@@ -12,11 +11,17 @@ export interface DeleteBranchConfiguration {
 export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, DeleteBranchConfiguration> = async ctx => {
     const pr = ctx.data.PullRequest[0];
     const { owner, name, org } = pr.repo;
+    const slug = `${owner}/${name}#${pr.number}`;
+    const link = `[${slug}](${pr.url})`;
+
+    await ctx.audit.log(`Starting auto-branch deletion for pull request ${slug} with labels: ${pr.labels.map(l => l.name).join(", ")}`);
 
     let deletePr = false;
-    if (!!pr.merged && pr.labels.some(l => l.name === "")) {
+    if (!!pr.merged && pr.labels.some(l => l.name === "auto-branch-delete:on-merge")) {
+        await ctx.audit.log(`Pull request ${slug} merged. Deleting branch...`);
         deletePr = true;
-    } else if (pr.labels.some(l => l.name === "")) {
+    } else if (pr.labels.some(l => l.name === "auto-branch-delete:on-close")) {
+        await ctx.audit.log(`Pull request ${slug} closed. Deleting branch...`);
         deletePr = true;
     }
 
@@ -30,22 +35,25 @@ export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, Delete
                     repo: pr.repo.name,
                     ref: `heads/${pr.branchName}`,
                 });
+                await ctx.audit.log(`Pull request ${slug} branch ${pr.branchName} deleted`);
                 return {
                     code: 0,
-                    reason: `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} branch ${pr.branchName} deleted`,
+                    reason: `Pull request ${link} branch ${pr.branchName} deleted`,
                 };
             } catch (e) {
                 console.warn(`Failed to delete branch: ${e.message}`);
+                await ctx.audit.log(`Pull request ${link} branch ${pr.branchName} failed to delete`, Severity.ERROR);
                 return {
-                    code: 0,
-                    reason: `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} branch ${pr.branchName} failed to delete`,
+                    code: 1,
+                    reason: `Pull request ${link} branch ${pr.branchName} failed to delete`,
                 };
             }
         }
     }
 
+    await ctx.audit.log(`Pull request ${link} branch deletion not requested`);
     return {
         code: 0,
-        reason: `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} branch deletion not requested`,
+        reason: `Pull request ${link} branch deletion not requested`,
     };
 };
