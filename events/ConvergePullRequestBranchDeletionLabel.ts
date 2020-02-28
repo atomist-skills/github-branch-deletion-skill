@@ -30,7 +30,7 @@ import {
 export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscription, DeleteBranchConfiguration> = async ctx => {
     const pr = ctx.data.PullRequest[0];
 
-    if (pr.action === PullRequestAction.Opened) {
+    if (pr.action !== PullRequestAction.Opened) {
         await ctx.audit.log(`Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} not opened. Ignoring...`);
 
         return {
