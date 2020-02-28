@@ -22,10 +22,23 @@ import {
     apiUrl,
     gitHub,
 } from "./github";
-import { ConvergePullRequestBranchDeletionLabelSubscription } from "./types";
+import {
+    ConvergePullRequestBranchDeletionLabelSubscription,
+    PullRequestAction,
+} from "./types";
 
 export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscription, DeleteBranchConfiguration> = async ctx => {
     const pr = ctx.data.PullRequest[0];
+
+    if (pr.action === PullRequestAction.Opened) {
+        await ctx.audit.log(`Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} not opened. Ignoring...`);
+
+        return {
+            code: 0,
+            reason: `Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) not opened. Ignoring...`,
+        };
+    }
+
     const repo = pr.repo;
     const { owner, name } = repo;
     const credentials = await ctx.credential.resolve(gitHubAppToken({ owner, repo: name }));
