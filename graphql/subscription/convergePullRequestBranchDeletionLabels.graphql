@@ -1,5 +1,5 @@
 subscription ConvergePullRequestBranchDeletionLabel{
-    PullRequest(actions: [created, opened]) {
+    PullRequest(action: opened) {
         url
         number
         repo {
