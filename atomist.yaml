@@ -20,7 +20,11 @@ skill:
   version: 1.2.3
   author: Atomist
   description: |-
-    Automatically delete pull request branches when the PR gets closed
+    Automatically delete pull request branches when a pull request is closed.
+  documentation: |-
+    Automatically delete pull request branches when a pull request is closed. 
+    No more dangling branches cluttering up your repositories, and no need to manually delete branches. 
+    Use this skill to automatically delete branches when pull requests are closed or closed merged.
   category:
     - code_review
     - dev_ex
@@ -43,13 +47,13 @@ skill:
 parameters:
   - single_choice:
       name: deleteOn
-      display_name: Default Auto-branch Deletion Policy
+      display_name: Default Auto-branch deletion policy
       description: |-
-        Branch deletion policy to apply when no explicit label is configured on pull requests
+        Branch deletion policy to apply when no explicit label is configured on a pull request
       options:
-        - text: On merged PR
+        - text: On pull request merge
           value: on-merge
-        - text: On closed PR
+        - text: On pull request close or merge
           value: on-close
       default_value: on-merge
       required: false
