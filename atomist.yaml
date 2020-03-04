@@ -47,7 +47,7 @@ skill:
 parameters:
   - single_choice:
       name: deleteOn
-      display_name: Default Auto-branch deletion policy
+      display_name: Default auto-deletion policy
       description: |-
         Branch deletion policy to apply when no explicit label is configured on a pull request
       options:
