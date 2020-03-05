@@ -17,7 +17,7 @@
 skill:
   name: atomist/github-branch-deletion-skill
   title: Auto-delete branches
-  version: 1.2.4
+  version: 1.2.5
   author: Atomist
   description: |-
     Automatically delete pull request branches when a pull request is closed.
