@@ -53,6 +53,7 @@ export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, Delete
 
     await ctx.audit.log(`Pull request ${link} branch deletion not requested`);
     return {
+        visibility: "hidden",
         code: 0,
         reason: `Pull request ${link} branch deletion not requested`,
     };

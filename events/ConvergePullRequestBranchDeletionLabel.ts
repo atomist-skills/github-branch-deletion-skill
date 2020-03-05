@@ -31,11 +31,12 @@ export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscri
     const pr = ctx.data.PullRequest[0];
 
     if (pr.action !== PullRequestAction.Opened) {
-        await ctx.audit.log(`Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} not opened. Ignoring...`);
+        await ctx.audit.log(`Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} action not opened. Ignoring...`);
 
         return {
+            visibility: "hidden",
             code: 0,
-            reason: `Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) not opened. Ignoring...`,
+            reason: `Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) action not opened. Ignoring...`,
         };
     }
 
@@ -52,7 +53,7 @@ export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscri
 
     const labels = [];
     if (!pr.labels.some(l => l.name.startsWith("auto-branch-delete:"))) {
-        labels.push(`auto-branch-delete:${ctx.configuration?.parameters?.deleteOn || "on-merge"}`);
+        labels.push(`auto-branch-delete:${ctx.configuration[0]?.parameters?.deleteOn || "on-merge"}`);
     }
 
     await ctx.audit.log(`Labelling pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} with configured auto-branch deletion method`);
@@ -69,7 +70,7 @@ export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscri
 
     return {
         code: 0,
-        reason: `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} labelled with auto-branch deletion label`,
+        reason: `Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) labelled with auto-branch deletion label`,
     };
 };
 
