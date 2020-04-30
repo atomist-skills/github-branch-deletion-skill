@@ -1,5 +1,22 @@
+/*
+ * Copyright © 2020 Atomist, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Severity } from "@atomist/skill-logging";
 import { EventHandler } from "@atomist/skill/lib/handler";
+import { warn } from "@atomist/skill/lib/log";
 import { gitHubAppToken } from "@atomist/skill/lib/secrets";
 import { gitHub } from "./github";
 import { DeleteBranchOnPullRequestSubscription } from "./types";
@@ -27,7 +44,7 @@ export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, Delete
 
     if (deletePr) {
         const credential = await ctx.credential.resolve(gitHubAppToken({ owner, repo: name, apiUrl: org.provider.apiUrl }));
-        if (!!credential) {
+        if (credential) {
             const api = gitHub(credential.token, org.provider.apiUrl);
             try {
                 await api.git.deleteRef({
@@ -41,7 +58,7 @@ export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, Delete
                     reason: `Pull request ${link} branch ${pr.branchName} deleted`,
                 };
             } catch (e) {
-                console.warn(`Failed to delete branch: ${e.message}`);
+                warn(`Failed to delete branch: ${e.message}`);
                 await ctx.audit.log(`Pull request ${link} branch ${pr.branchName} failed to delete`, Severity.ERROR);
                 return {
                     code: 1,

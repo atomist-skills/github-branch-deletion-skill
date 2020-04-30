@@ -60,7 +60,7 @@ export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscri
 
     // Add the default labels to the PR
     await api.issues.addLabels({
-        issue_number: pr.number,
+        issue_number: pr.number, // eslint-disable-line @typescript-eslint/camelcase
         owner: repo.owner,
         repo: repo.name,
         labels,

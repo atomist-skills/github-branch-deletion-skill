@@ -17,7 +17,7 @@
 skill:
   name: atomist/github-branch-deletion-skill
   title: Auto-delete branches
-  version: 1.2.5
+  version: 1.3.0
   author: Atomist
   description: |-
     Automatically delete pull request branches when a pull request is closed.
@@ -35,15 +35,24 @@ skill:
   video: https://images.atomist.com/skills/github-branch-deletion.gif
 
   package:
-    - use: atomist/package-sdm-skill/package
-      parameters:
-        main: node_modules/@atomist/skill/lib/function.js
-        dependencies: keep
+    use: atomist/package-npm-skill
 
   runtime:
     memory: 1024
     name: nodejs10
     entry_point: entryPoint
+
+resource_providers:
+  - name: github
+    description: GitHub
+    type_name: GitHubAppResourceProvider
+    min_required: 1
+    max_allowed: 1
+  - name: slack
+    description: Slack
+    type_name: SlackResourceProvider
+    min_required: 0
+    max_allowed: 1
 
 parameters:
   - single_choice:
