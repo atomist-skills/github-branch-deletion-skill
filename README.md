@@ -1,44 +1,70 @@
 # `atomist/github-branch-deletion-skill`
 
 <!---atomist-skill-readme:start--->
+ 
+# What it's useful for
 
-Once a pull request is merged or closed, the head branch will be deleted. This skill is configured to work on any number of repositories without needing to edit individual repository settings on GitHub.com.
+With this skill you can automatically delete pull request branches once a pull request is merged or closed. 
 
-### **Enabling branch auto-deletion**
+This approach makes it easy for pull request authors (or anyone with permissions in the repository) to flag a pull 
+request for branch auto-deletion. 
 
-To enable auto-deletion, one of the auto-delete policy labels must be added to the pull request. Set the default auto-deletion policy in order for this skill to automatically apply the labels to new pull requests raised.
+When a new pull request is created, this skill will automatically apply the default auto-deletion policy labels
+(if set). The label can be changed on the pull request to modify the policy for auto-deletion.
 
-- `auto-branch-delete:on-merge`
-- `auto-branch-delete:on-close`
+Opting out of auto-deletion is a simple matter of removing the auto-deletion labels from a pull request. 
 
-The labels are automatically added to the repository when this skill is enabled.
+This skill is configured to work on any number of repositories without needing to edit individual repository settings
+on GitHub.com.
 
-## Configuration
+# Before you get started
 
-### Default auto-deletion policy
+Connect and configure these integrations:
 
-To set the default policy to use when auto-deleting branches when no explicit label is applied to the pull request, 
-select one of the options.
+1. **GitHub**
+2. **Slack**
 
-- **On pull request merge** — Deletes head branch when a pull request is merged.
-- **On pull request close or merge** — Deletes head branch when a pull request is closed regardless of its merge status.
+The **GitHub** integration must be configured in order to use this skill. At least one repository must be selected. 
+We recommend connecting the **Slack** integration.
 
-### Which repositories
+# How to configure
 
-By default, this skill will be enabled for all repositories in all organizations you have connected.
-To restrict the organizations or specific repositories on which the skill will run, you can explicitly
-choose organization(s) and repositories.
+1. **Select the default auto-deletion policy**
 
-## Integrations
+    ![Default auto-deletion policy expanded](docs/images/default-auto-deletion-policy-expanded.png)
 
-**GitHub**
+    To do so when no explicit auto-deletion label is applied to the pull request, you can select one of the options:
 
-The Atomist GitHub integration must be configured to used this skill. At least one repository must be selected.
+    - **On pull request merge** — Deletes head branch when a pull request is merged.
+    
+    - **On pull request close or merge** — Deletes head branch when a pull request is closed regardless of its merge status.
 
-**Slack**
+2. **Determine repository scope**
 
-If the Atomist Slack integration is configured, this skill will send a notification message to the configured 
-Slack channel when a branch is deleted.
+    ![Repository filter](docs/images/repo-filter.png)
+
+    By default, this skill will be enabled for all repositories in all organizations you have connected.
+
+    To restrict the organizations or specific repositories on which the skill will run, you can explicitly choose 
+    organization(s) and repositories.
+
+# How to use Pull Request Branch auto-deletion
+
+1. **Configure skill, set default auto-deletion policy** 
+
+2. **For every new pull request raised, this skill will automatically apply the following label when relevant:**
+
+    **Auto-deletion policy labels**
+
+    - `auto-branch-delete:on-merge`
+    - `auto-branch-delete:on-close`
+
+3. **Enjoy not having to manually clean up pull request branches when PRs are closed!**
+
+    Note: the label is automatically added to and removed from the repository depending. 
+    
+To create feature requests or bug reports, create an [issue in the repository for this skill](https://github.com/atomist-skills/github-branch-deletion-skill/issues). 
+See the [code](https://github.com/atomist-skills/github-branch-deletion-skill) for the skill.
 
 <!---atomist-skill-readme:end--->
 
