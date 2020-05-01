@@ -6,18 +6,16 @@ Automatically delete pull request branches when a pull request is closed.
  
 # What it's useful for
 
-With this skill you can automatically delete pull request branches once a pull request is merged or closed. 
+This skill automatically deletes pull request branches once a pull request is merged or closed so that you don't have to 
+worry about old branches or periodically make time to clean them up.
 
-This approach makes it easy for pull request authors (or anyone with permissions in the repository) to flag a pull 
-request for branch auto-deletion. 
+Pull request authors or anyone with permissions in the repository can flag a pull request for branch auto-deletion. 
 
-When a new pull request is created, this skill will automatically apply the default auto-deletion policy labels
-(if set). The label can be changed on the pull request to modify the policy for auto-deletion.
+When a new pull request is created, this skill will automatically apply the default auto-deletion policy labels, if set. You can change the label directly on the pull request to change the auto-deletion policy for the pull request.
 
-Opting out of auto-deletion is a simple matter of removing the auto-deletion labels from a pull request. 
+Simply remove the auto-deletion labels from a pull request if you do not want the branch to be auto-deleted.
 
-This skill is configured to work on any number of repositories without needing to edit individual repository settings
-on GitHub.com.
+Configure this skill to run on as many repositories as you want.
 
 # Before you get started
 
@@ -63,7 +61,7 @@ We recommend connecting the **Slack** integration.
 
 3. **Enjoy not having to manually clean up pull request branches when PRs are closed!**
 
-    Note: the label is automatically added to and removed from the repository depending. 
+**Note:** this skill automatically adds the labels needed for auto-deletion. 
     
 To create feature requests or bug reports, create an [issue in the repository for this skill](https://github.com/atomist-skills/github-branch-deletion-skill/issues). 
 See the [code](https://github.com/atomist-skills/github-branch-deletion-skill) for the skill.
