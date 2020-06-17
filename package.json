@@ -1,6 +1,6 @@
 {
   "name": "@atomist/github-branch-deletion-skill",
-  "description": "Auto-delete branches",
+  "description": "Auto-delete Branches",
   "author": {
     "name": "Atomist",
     "email": "oss@atomist.com"
