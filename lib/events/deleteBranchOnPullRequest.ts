@@ -32,7 +32,9 @@ export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, Delete
     const slug = `${owner}/${name}#${pr.number}`;
     const link = `[${slug}](${pr.url})`;
 
-    await ctx.audit.log(`Starting auto-branch deletion for pull request ${slug} with labels: ${pr.labels.map(l => l.name).join(", ")}`);
+    await ctx.audit.log(
+        `Starting auto-branch deletion for pull request ${slug} with labels: ${pr.labels.map(l => l.name).join(", ")}`,
+    );
 
     let deletePr = false;
     if (!!pr.merged && pr.labels.some(l => l.name === "auto-branch-delete:on-merge")) {
@@ -44,7 +46,9 @@ export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, Delete
     }
 
     if (deletePr) {
-        const credential = await ctx.credential.resolve(gitHubAppToken({ owner, repo: name, apiUrl: org.provider.apiUrl }));
+        const credential = await ctx.credential.resolve(
+            gitHubAppToken({ owner, repo: name, apiUrl: org.provider.apiUrl }),
+        );
         if (credential) {
             const api = gitHub(gitHubComRepository({ owner, repo: name, credential }));
             try {

@@ -1,6 +1,22 @@
 # `atomist/github-branch-deletion-skill`
 
+<!---atomist-skill-description:start--->
+
 Automatically delete pull request branches when a pull request is closed.
+
+<!---atomist-skill-description:end--->
+
+---
+
+<!---atomist-skill-long_description:start--->
+
+Automatically delete pull request branches when a pull request is closed. 
+No more dangling branches cluttering up your repositories, and no need to manually delete branches. 
+Use this skill to automatically delete branches when pull requests are closed or closed merged.
+
+<!---atomist-skill-long_description:end--->
+
+---
 
 <!---atomist-skill-readme:start--->
  

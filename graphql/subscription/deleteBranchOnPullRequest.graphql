@@ -1,4 +1,4 @@
-subscription DeleteBranchOnPullRequest {
+subscription deleteBranchOnPullRequest {
     PullRequest(actions: [closed]) {
         url
         merged

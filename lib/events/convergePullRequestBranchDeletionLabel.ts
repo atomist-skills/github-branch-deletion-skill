@@ -16,20 +16,21 @@
 
 import { EventHandler } from "@atomist/skill/lib/handler";
 import { gitHubComRepository } from "@atomist/skill/lib/project";
-import { gitHub } from "@atomist/skill/lib/project/github";
+import { convergeLabel, gitHub } from "@atomist/skill/lib/project/github";
 import { gitHubAppToken } from "@atomist/skill/lib/secrets";
-import * as github from "@octokit/rest";
-import { DeleteBranchConfiguration } from "./DeleteBranchOnPullRequest";
-import {
-    ConvergePullRequestBranchDeletionLabelSubscription,
-    PullRequestAction,
-} from "../typings/types";
+import { DeleteBranchConfiguration } from "./deleteBranchOnPullRequest";
+import { ConvergePullRequestBranchDeletionLabelSubscription, PullRequestAction } from "../typings/types";
 
-export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscription, DeleteBranchConfiguration> = async ctx => {
+export const handler: EventHandler<
+    ConvergePullRequestBranchDeletionLabelSubscription,
+    DeleteBranchConfiguration
+> = async ctx => {
     const pr = ctx.data.PullRequest[0];
 
     if (pr.action !== PullRequestAction.Opened) {
-        await ctx.audit.log(`Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} action not opened. Ignoring...`);
+        await ctx.audit.log(
+            `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} action not opened. Ignoring...`,
+        );
 
         return {
             visibility: "hidden",
@@ -44,51 +45,34 @@ export const handler: EventHandler<ConvergePullRequestBranchDeletionLabelSubscri
 
     await ctx.audit.log(`Converging auto-branch deletion label`);
 
-    const api = gitHub(gitHubComRepository({ owner: repo.owner, repo: repo.name, credential }));
+    const id = gitHubComRepository({ owner: repo.owner, repo: repo.name, credential });
 
-    await addLabel("auto-branch-delete:on-close", "0F2630", owner, name, api);
-    await addLabel("auto-branch-delete:on-merge", "0F2630", owner, name, api);
+    await convergeLabel(id, "auto-branch-delete:on-close", "0F2630", "Delete branch when pull request gets closed");
+    await convergeLabel(id, "auto-branch-delete:on-merge", "0F2630", "Delete branch when pull request gets merged");
 
     const labels = [];
     if (!pr.labels.some(l => l.name.startsWith("auto-branch-delete:"))) {
         labels.push(`auto-branch-delete:${ctx.configuration[0]?.parameters?.deleteOn || "on-merge"}`);
     }
 
-    await ctx.audit.log(`Labelling pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} with configured auto-branch deletion method`);
+    await ctx.audit.log(
+        `Labelling pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} with configured auto-branch deletion method`,
+    );
 
     // Add the default labels to the PR
-    await api.issues.addLabels({
-        issue_number: pr.number, // eslint-disable-line @typescript-eslint/camelcase
+    await gitHub(id).issues.addLabels({
+        issue_number: pr.number,
         owner: repo.owner,
         repo: repo.name,
         labels,
     });
 
-    await ctx.audit.log(`Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} labelled with: ${labels.join(", ")}`);
+    await ctx.audit.log(
+        `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} labelled with: ${labels.join(", ")}`,
+    );
 
     return {
         code: 0,
         reason: `Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) labelled with auto-branch deletion label`,
     };
 };
-
-async function addLabel(name: string,
-                        color: string,
-                        owner: string,
-                        repo: string,
-                        api: github.Octokit): Promise<void> {
-    try {
-        await api.issues.getLabel({
-            name,
-            repo,
-            owner,
-        });
-    } catch (err) {
-        await api.issues.createLabel({
-            owner,
-            repo,
-            name,
-            color,
-        });
-    }
-}
