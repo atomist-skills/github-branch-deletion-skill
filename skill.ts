@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-import { gitHubResourceProvider, slackResourceProvider } from "@atomist/skill/lib/resource_providers";
-import { ParameterType, repoFilter, skill } from "@atomist/skill/lib/skill";
+import { Category, parameter, ParameterType, resourceProvider, skill } from "@atomist/skill";
 import { DeleteBranchConfiguration } from "./lib/events/deleteBranchOnPullRequest";
 
 export const Skill = skill<DeleteBranchConfiguration & { repos: any }>({
+    name: "github-branch-deletion-skill",
+    namespace: "atomist",
+    displayName: "Auto-delete Branches",
+    author: "Atomist",
+    categories: [Category.CodeReview, Category.DevEx],
+    homepageUrl: "https://github.com/atomist-skills/github-branch-deletion-skill",
+    repositoryUrl: "https://github.com/atomist-skills/github-branch-deletion.git",
+    iconUrl: "file://docs/images/icon.svg",
+    license: "Apache-2.0",
+
     runtime: {
         memory: 1024,
         timeout: 540,
     },
 
     resourceProviders: {
-        github: gitHubResourceProvider({ minRequired: 1 }),
-        slack: slackResourceProvider({ minRequired: 0 }),
+        github: resourceProvider.gitHub({ minRequired: 1 }),
+        slack: resourceProvider.chat({ minRequired: 0 }),
     },
 
     parameters: {
@@ -47,7 +56,7 @@ export const Skill = skill<DeleteBranchConfiguration & { repos: any }>({
             defaultValue: "on-merge",
             required: false,
         },
-        repos: repoFilter({ required: false }),
+        repos: parameter.repoFilter({ required: false }),
     },
 
     subscriptions: ["file://graphql/subscription/*.graphql"],

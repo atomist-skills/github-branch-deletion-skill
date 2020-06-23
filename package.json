@@ -1,24 +1,7 @@
 {
-  "name": "@atomist/github-branch-deletion-skill",
-  "description": "Auto-delete Branches",
-  "author": {
-    "name": "Atomist",
-    "email": "oss@atomist.com"
-  },
-  "keywords": [
-    "CODE_REVIEW",
-    "DEVEX"
-  ],
-  "license": "Apache-2.0",
-  "homepage": "https://github.com/atomist-skills/github-branch-deletion-skill",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/atomist-skills/github-branch-deletion.git"
-  },
-  "icon": "file://docs/images/icon.svg",
   "main": "node_modules/@atomist/skill/lib/function.js",
   "dependencies": {
-    "@atomist/skill": "0.1.0-master.20200617150530"
+    "@atomist/skill": "0.1.0-master.20200623075110"
   },
   "devDependencies": {
     "@google-cloud/functions-framework": "^1.5.1",

@@ -15,11 +15,7 @@
  */
 
 import { Severity } from "@atomist/skill-logging";
-import { EventHandler } from "@atomist/skill/lib/handler";
-import { warn } from "@atomist/skill/lib/log";
-import { gitHubComRepository } from "@atomist/skill/lib/project";
-import { gitHub } from "@atomist/skill/lib/project/github";
-import { gitHubAppToken } from "@atomist/skill/lib/secrets";
+import { EventHandler, log, repository, secret, github } from "@atomist/skill";
 import { DeleteBranchOnPullRequestSubscription } from "../typings/types";
 
 export interface DeleteBranchConfiguration {
@@ -47,10 +43,10 @@ export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, Delete
 
     if (deletePr) {
         const credential = await ctx.credential.resolve(
-            gitHubAppToken({ owner, repo: name, apiUrl: org.provider.apiUrl }),
+            secret.gitHubAppToken({ owner, repo: name, apiUrl: org.provider.apiUrl }),
         );
         if (credential) {
-            const api = gitHub(gitHubComRepository({ owner, repo: name, credential }));
+            const api = github.api(repository.gitHub({ owner, repo: name, credential }));
             try {
                 await api.git.deleteRef({
                     owner: pr.repo.owner,
@@ -63,7 +59,7 @@ export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, Delete
                     reason: `Pull request ${link} branch ${pr.branchName} deleted`,
                 };
             } catch (e) {
-                warn(`Failed to delete branch: ${e.message}`);
+                log.warn(`Failed to delete branch: ${e.message}`);
                 await ctx.audit.log(`Pull request ${link} branch ${pr.branchName} failed to delete`, Severity.ERROR);
                 return {
                     code: 0,

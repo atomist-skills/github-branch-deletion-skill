@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import { EventHandler } from "@atomist/skill/lib/handler";
-import { gitHubComRepository } from "@atomist/skill/lib/project";
-import { convergeLabel, gitHub } from "@atomist/skill/lib/project/github";
-import { gitHubAppToken } from "@atomist/skill/lib/secrets";
+import { EventHandler, repository, github, secret } from "@atomist/skill";
 import { DeleteBranchConfiguration } from "./deleteBranchOnPullRequest";
 import { ConvergePullRequestBranchDeletionLabelSubscription, PullRequestAction } from "../typings/types";
 
@@ -41,14 +38,24 @@ export const handler: EventHandler<
 
     const repo = pr.repo;
     const { owner, name } = repo;
-    const credential = await ctx.credential.resolve(gitHubAppToken({ owner, repo: name }));
+    const credential = await ctx.credential.resolve(secret.gitHubAppToken({ owner, repo: name }));
 
     await ctx.audit.log(`Converging auto-branch deletion label`);
 
-    const id = gitHubComRepository({ owner: repo.owner, repo: repo.name, credential });
+    const id = repository.gitHub({ owner: repo.owner, repo: repo.name, credential });
 
-    await convergeLabel(id, "auto-branch-delete:on-close", "0F2630", "Delete branch when pull request gets closed");
-    await convergeLabel(id, "auto-branch-delete:on-merge", "0F2630", "Delete branch when pull request gets merged");
+    await github.convergeLabel(
+        id,
+        "auto-branch-delete:on-close",
+        "0F2630",
+        "Delete branch when pull request gets closed",
+    );
+    await github.convergeLabel(
+        id,
+        "auto-branch-delete:on-merge",
+        "0F2630",
+        "Delete branch when pull request gets merged",
+    );
 
     const labels = [];
     if (!pr.labels.some(l => l.name.startsWith("auto-branch-delete:"))) {
@@ -60,7 +67,7 @@ export const handler: EventHandler<
     );
 
     // Add the default labels to the PR
-    await gitHub(id).issues.addLabels({
+    await github.api(id).issues.addLabels({
         issue_number: pr.number,
         owner: repo.owner,
         repo: repo.name,
