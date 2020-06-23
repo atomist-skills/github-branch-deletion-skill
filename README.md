@@ -38,10 +38,10 @@ Configure this skill to run on as many repositories as you want.
 Connect and configure these integrations:
 
 1. **GitHub**
-2. **Slack**
+2. **Slack or Microsoft Teams**
 
 The **GitHub** integration must be configured in order to use this skill. At least one repository must be selected. 
-We recommend connecting the **Slack** integration.
+We recommend connecting the **Slack** or **Microsoft Teams** integration.
 
 # How to configure
 
