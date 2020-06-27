@@ -20,7 +20,7 @@ import { DeleteBranchConfiguration } from "./lib/events/deleteBranchOnPullReques
 export const Skill = skill<DeleteBranchConfiguration & { repos: any }>({
     name: "github-branch-deletion-skill",
     namespace: "atomist",
-    displayName: "Auto-delete Branches",
+    displayName: "Auto-Delete Branches",
     author: "Atomist",
     categories: [Category.CodeReview, Category.DevEx],
     homepageUrl: "https://github.com/atomist-skills/github-branch-deletion-skill",
