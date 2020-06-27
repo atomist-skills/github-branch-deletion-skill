@@ -2,7 +2,7 @@
 
 <!---atomist-skill-description:start--->
 
-Automatically delete pull request branches when a pull request is closed
+Delete pull request branches when a pull request is closed
 
 <!---atomist-skill-description:end--->
 
