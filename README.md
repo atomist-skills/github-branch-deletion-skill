@@ -78,7 +78,7 @@ We recommend connecting the **Slack** or **Microsoft Teams** integration.
 3. **Enjoy not having to manually clean up pull request branches when PRs are closed!**
 
 Note: this skill automatically adds the labels needed for auto-deletion.
-  
+
 To create feature requests or bug reports, create an [issue in the repository for this skill](https://github.com/atomist-skills/github-branch-deletion-skill/issues).
 See the [code](https://github.com/atomist-skills/github-branch-deletion-skill) for the skill.
 
