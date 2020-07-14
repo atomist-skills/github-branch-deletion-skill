@@ -1,20 +1,20 @@
 subscription deleteBranchOnPullRequest {
-    PullRequest(actions: [closed]) {
-        url
-        merged
-        number
-        branchName
-        repo {
-            owner
-            name
-            org {
-                provider {
-                    apiUrl
-                }
-            }
+  PullRequest(actions: [closed]) {
+    url
+    merged
+    number
+    branchName
+    repo {
+      owner
+      name
+      org {
+        provider {
+          apiUrl
         }
-        labels @required {
-            name @matches(re: "^auto-branch-delete:.*$")
-        }
+      }
     }
+    labels @required {
+      name @matches(re: "^auto-branch-delete:.*$")
+    }
+  }
 }
