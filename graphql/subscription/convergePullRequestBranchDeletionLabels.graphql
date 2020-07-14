@@ -1,19 +1,19 @@
-subscription convergePullRequestBranchDeletionLabel{
-    PullRequest {
-        action
-        url
-        number
-        repo {
-            owner
-            name
-            org {
-                provider {
-                    apiUrl
-                }
-            }
+subscription convergePullRequestBranchDeletionLabel {
+  PullRequest {
+    action
+    url
+    number
+    repo {
+      owner
+      name
+      org {
+        provider {
+          apiUrl
         }
-        labels {
-            name
-        }
+      }
     }
+    labels {
+      name
+    }
+  }
 }
