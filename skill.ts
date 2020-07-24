@@ -22,7 +22,7 @@ export const Skill = skill<DeleteBranchConfiguration & { repos: any }>({
     namespace: "atomist",
     displayName: "Auto-Delete Branches",
     author: "Atomist",
-    categories: [Category.CodeReview, Category.DevEx],
+    categories: [Category.CodeReview, Category.ProjectManagement],
     homepageUrl: "https://github.com/atomist-skills/github-branch-deletion-skill",
     repositoryUrl: "https://github.com/atomist-skills/github-branch-deletion.git",
     iconUrl: "file://docs/images/icon.svg",
