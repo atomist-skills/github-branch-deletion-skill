@@ -14,71 +14,92 @@
  * limitations under the License.
  */
 
-import { EventHandler, repository, github, secret, status } from "@atomist/skill";
+import {
+	EventHandler,
+	repository,
+	github,
+	secret,
+	status,
+} from "@atomist/skill";
 import { DeleteBranchConfiguration } from "./deleteBranchOnPullRequest";
-import { ConvergePullRequestBranchDeletionLabelSubscription, PullRequestAction } from "../typings/types";
+import {
+	ConvergePullRequestBranchDeletionLabelSubscription,
+	PullRequestAction,
+} from "../typings/types";
 
 export const handler: EventHandler<
-    ConvergePullRequestBranchDeletionLabelSubscription,
-    DeleteBranchConfiguration
+	ConvergePullRequestBranchDeletionLabelSubscription,
+	DeleteBranchConfiguration
 > = async ctx => {
-    const pr = ctx.data.PullRequest[0];
+	const pr = ctx.data.PullRequest[0];
 
-    if (pr.action !== PullRequestAction.Opened) {
-        await ctx.audit.log(
-            `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} action not opened. Ignoring...`,
-        );
+	if (pr.action !== PullRequestAction.Opened) {
+		await ctx.audit.log(
+			`Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} action not opened. Ignoring...`,
+		);
 
-        return status
-            .success(
-                `Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) action not opened. Ignoring...`,
-            )
-            .hidden();
-    }
+		return status
+			.success(
+				`Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) action not opened. Ignoring...`,
+			)
+			.hidden();
+	}
 
-    const repo = pr.repo;
-    const { owner, name } = repo;
-    const credential = await ctx.credential.resolve(secret.gitHubAppToken({ owner, repo: name }));
+	const repo = pr.repo;
+	const { owner, name } = repo;
+	const credential = await ctx.credential.resolve(
+		secret.gitHubAppToken({ owner, repo: name }),
+	);
 
-    await ctx.audit.log(`Converging auto-branch deletion label`);
+	await ctx.audit.log(`Converging auto-branch deletion label`);
 
-    const id = repository.gitHub({ owner: repo.owner, repo: repo.name, credential });
+	const id = repository.gitHub({
+		owner: repo.owner,
+		repo: repo.name,
+		credential,
+	});
 
-    await github.convergeLabel(
-        id,
-        "auto-branch-delete:on-close",
-        "0F2630",
-        "Delete branch when pull request gets closed",
-    );
-    await github.convergeLabel(
-        id,
-        "auto-branch-delete:on-merge",
-        "0F2630",
-        "Delete branch when pull request gets merged",
-    );
+	await github.convergeLabel(
+		id,
+		"auto-branch-delete:on-close",
+		"0F2630",
+		"Delete branch when pull request gets closed",
+	);
+	await github.convergeLabel(
+		id,
+		"auto-branch-delete:on-merge",
+		"0F2630",
+		"Delete branch when pull request gets merged",
+	);
 
-    const labels = [];
-    if (!pr.labels.some(l => l.name.startsWith("auto-branch-delete:"))) {
-        labels.push(`auto-branch-delete:${ctx.configuration[0]?.parameters?.deleteOn || "on-merge"}`);
-    }
+	const labels = [];
+	if (!pr.labels.some(l => l.name.startsWith("auto-branch-delete:"))) {
+		labels.push(
+			`auto-branch-delete:${
+				ctx.configuration[0]?.parameters?.deleteOn || "on-merge"
+			}`,
+		);
+	}
 
-    await ctx.audit.log(
-        `Labelling pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} with configured auto-branch deletion method`,
-    );
+	await ctx.audit.log(
+		`Labelling pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} with configured auto-branch deletion method`,
+	);
 
-    // Add the default labels to the PR
-    await github.api(id).issues.addLabels({
-        issue_number: pr.number,
-        owner: repo.owner,
-        repo: repo.name,
-        labels,
-    });
+	// Add the default labels to the PR
+	await github.api(id).issues.addLabels({
+		issue_number: pr.number,
+		owner: repo.owner,
+		repo: repo.name,
+		labels,
+	});
 
-    await ctx.audit.log(
-        `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} labelled with: ${labels.join(", ")}`,
-    );
+	await ctx.audit.log(
+		`Pull request ${pr.repo.owner}/${pr.repo.name}#${
+			pr.number
+		} labelled with: ${labels.join(", ")}`,
+	);
 
-    return status.success(
-        `Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) labelled with auto-branch deletion label`,
-    );
+	return status.success(
+		`Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) labelled with auto-branch deletion label`,
+	);
 };
