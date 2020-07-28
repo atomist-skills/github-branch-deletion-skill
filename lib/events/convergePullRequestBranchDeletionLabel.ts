@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { EventHandler, repository, github, secret } from "@atomist/skill";
+import { EventHandler, repository, github, secret, status } from "@atomist/skill";
 import { DeleteBranchConfiguration } from "./deleteBranchOnPullRequest";
 import { ConvergePullRequestBranchDeletionLabelSubscription, PullRequestAction } from "../typings/types";
 
@@ -29,11 +29,11 @@ export const handler: EventHandler<
             `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} action not opened. Ignoring...`,
         );
 
-        return {
-            visibility: "hidden",
-            code: 0,
-            reason: `Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) action not opened. Ignoring...`,
-        };
+        return status
+            .success(
+                `Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) action not opened. Ignoring...`,
+            )
+            .hidden();
     }
 
     const repo = pr.repo;
@@ -78,8 +78,7 @@ export const handler: EventHandler<
         `Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} labelled with: ${labels.join(", ")}`,
     );
 
-    return {
-        code: 0,
-        reason: `Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) labelled with auto-branch deletion label`,
-    };
+    return status.success(
+        `Pull request [${pr.repo.owner}/${pr.repo.name}#${pr.number}](${pr.url}) labelled with auto-branch deletion label`,
+    );
 };
