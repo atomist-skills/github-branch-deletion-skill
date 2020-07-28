@@ -56,7 +56,10 @@ export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, Delete
                 return status.success(`Pull request ${link} branch ${pr.branchName} deleted`);
             } catch (e) {
                 log.warn(`Failed to delete branch: ${e.message}`);
-                await ctx.audit.log(`Pull request ${link} branch ${pr.branchName} failed to delete`, log.Severity.Error);
+                await ctx.audit.log(
+                    `Pull request ${link} branch ${pr.branchName} failed to delete`,
+                    log.Severity.Error,
+                );
                 return status.success(`Pull request ${link} branch ${pr.branchName} failed to delete`);
             }
         }
