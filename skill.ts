@@ -14,50 +14,59 @@
  * limitations under the License.
  */
 
-import { Category, parameter, ParameterType, resourceProvider, skill } from "@atomist/skill";
+import {
+	Category,
+	parameter,
+	ParameterType,
+	resourceProvider,
+	skill,
+} from "@atomist/skill";
 import { DeleteBranchConfiguration } from "./lib/events/deleteBranchOnPullRequest";
 
 export const Skill = skill<DeleteBranchConfiguration & { repos: any }>({
-    name: "github-branch-deletion-skill",
-    namespace: "atomist",
-    displayName: "Auto-Delete Branches",
-    author: "Atomist",
-    categories: [Category.CodeReview, Category.ProjectManagement],
-    homepageUrl: "https://github.com/atomist-skills/github-branch-deletion-skill",
-    repositoryUrl: "https://github.com/atomist-skills/github-branch-deletion.git",
-    iconUrl: "file://docs/images/icon.svg",
-    license: "Apache-2.0",
+	name: "github-branch-deletion-skill",
+	namespace: "atomist",
+	displayName: "Auto-Delete Branches",
+	author: "Atomist",
+	categories: [Category.CodeReview, Category.ProjectManagement],
+	homepageUrl:
+		"https://github.com/atomist-skills/github-branch-deletion-skill",
+	repositoryUrl:
+		"https://github.com/atomist-skills/github-branch-deletion.git",
+	iconUrl: "file://docs/images/icon.svg",
+	license: "Apache-2.0",
 
-    runtime: {
-        memory: 1024,
-        timeout: 540,
-    },
+	runtime: {
+		memory: 1024,
+		timeout: 540,
+	},
 
-    resourceProviders: {
-        github: resourceProvider.gitHub({ minRequired: 1 }),
-        slack: resourceProvider.chat({ minRequired: 0 }),
-    },
+	resourceProviders: {
+		github: resourceProvider.gitHub({ minRequired: 1 }),
+		slack: resourceProvider.chat({ minRequired: 0 }),
+	},
 
-    parameters: {
-        deleteOn: {
-            type: ParameterType.SingleChoice,
-            displayName: "Default auto-deletion policy",
-            description: "Branch deletion policy to apply when no explicit label is configured on a pull request",
-            options: [
-                {
-                    text: "On pull request merge",
-                    value: "on-merge",
-                },
-                {
-                    text: "On pull request close or merge",
-                    value: "on-close",
-                },
-            ],
-            defaultValue: "on-merge",
-            required: false,
-        },
-        repos: parameter.repoFilter({ required: false }),
-    },
+	parameters: {
+		deleteOn: {
+			type: ParameterType.SingleChoice,
+			displayName: "Default auto-deletion policy",
+			description:
+				"Branch deletion policy to apply when no explicit label is configured on a pull request",
+			options: [
+				{
+					text: "On pull request merge",
+					value: "on-merge",
+				},
+				{
+					text: "On pull request close or merge",
+					value: "on-close",
+				},
+			],
+			defaultValue: "on-merge",
+			required: false,
+		},
+		repos: parameter.repoFilter({ required: false }),
+	},
 
-    subscriptions: ["file://graphql/subscription/*.graphql"],
+	subscriptions: ["file://graphql/subscription/*.graphql"],
 });
