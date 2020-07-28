@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Severity } from "@atomist/skill-logging";
-import { EventHandler, log, repository, secret, github } from "@atomist/skill";
+import { EventHandler, log, repository, secret, github, status } from "@atomist/skill";
 import { DeleteBranchOnPullRequestSubscription } from "../typings/types";
 
 export interface DeleteBranchConfiguration {
@@ -54,25 +53,15 @@ export const handler: EventHandler<DeleteBranchOnPullRequestSubscription, Delete
                     ref: `heads/${pr.branchName}`,
                 });
                 await ctx.audit.log(`Pull request ${slug} branch ${pr.branchName} deleted`);
-                return {
-                    code: 0,
-                    reason: `Pull request ${link} branch ${pr.branchName} deleted`,
-                };
+                return status.success(`Pull request ${link} branch ${pr.branchName} deleted`);
             } catch (e) {
                 log.warn(`Failed to delete branch: ${e.message}`);
-                await ctx.audit.log(`Pull request ${link} branch ${pr.branchName} failed to delete`, Severity.ERROR);
-                return {
-                    code: 0,
-                    reason: `Pull request ${link} branch ${pr.branchName} failed to delete`,
-                };
+                await ctx.audit.log(`Pull request ${link} branch ${pr.branchName} failed to delete`, log.Severity.Error);
+                return status.success(`Pull request ${link} branch ${pr.branchName} failed to delete`);
             }
         }
     }
 
     await ctx.audit.log(`Pull request ${link} branch deletion not requested`);
-    return {
-        visibility: "hidden",
-        code: 0,
-        reason: `Pull request ${link} branch deletion not requested`,
-    };
+    return status.success(`Pull request ${link} branch deletion not requested`).hidden();
 };
