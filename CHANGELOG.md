@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.6...HEAD)
 
+### Changed
+
+-   Update README.md. [43e5dc1](https://github.com/atomist-skills/github-branch-deletion-skill/commit/43e5dc1e2163bfb31c8d4f855a33fd237367081d)
+
 ## [2.0.6](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.5...2.0.6) - 2020-07-28
 
 ### Changed
