@@ -18,7 +18,7 @@ Use this skill to automatically delete branches when pull requests are closed or
 
 ---
 
-## <!---atomist-skill-readme:start--->
+<!---atomist-skill-readme:start--->
 
 Never manually delete branches again. Is cleaning up branches after pull requests are merged or closed a completely neglected task? This skill automatically deletes branches for you once a pull request is merged or closed.
 
