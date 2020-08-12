@@ -28,15 +28,15 @@ Never manually delete branches again. Is cleaning up branches after pull request
 -   Skip branch deletion when needed, simply remove the label from the pull request
 -   Your choice of deletion policy — merge or close and merge
 
-## Branches deleted, automatically, every time.
+# Branches deleted, automatically, every time.
 
 ![Branch deleted](docs/images/pr-branch-deleted.png)
 
-## Track pull request branch status in chat.
+# Track pull request branch status in chat.
 
 ![Branch status in chat](docs/images/branch-status-chat.png)
 
-## Choose the deletion policy that works for you.
+# Choose the deletion policy that works for you.
 
 ![Choose branch deletion policy](docs/images/deletion-policy.png)
 
