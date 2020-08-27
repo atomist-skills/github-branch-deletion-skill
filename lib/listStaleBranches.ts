@@ -125,7 +125,7 @@ export async function listStaleBranchesOnRepo(
 		await api.repos.listBranches({ owner: repo.owner, repo: repo.name })
 	).data
 		.filter(b => !b.protected)
-		.filter(b => b.name !== repo.defaultBranch)
+		.filter(b => b.name !== repo.defaultBranch && b.name !== "gh-pages")
 		.filter(b => !excludeBranch(repo, b.name, branchFilters));
 
 	const staleBranches: Array<{
