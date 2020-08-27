@@ -283,7 +283,7 @@ export async function listStaleBranchesOnRepo(
 						apiUrl: repo.apiUrl,
 						defaultBranch: repo.defaultBranch,
 						channels: JSON.stringify(repo.channels),
-						msgId,
+						msgId: id,
 					},
 				),
 				buttonForCommand(
@@ -299,7 +299,7 @@ export async function listStaleBranchesOnRepo(
 						apiUrl: repo.apiUrl,
 						defaultBranch: repo.defaultBranch,
 						channels: JSON.stringify(repo.channels),
-						msgId,
+						msgId: id,
 					},
 				),
 			];
