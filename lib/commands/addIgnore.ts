@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-import { CommandHandler, github, repository, secret } from "@atomist/skill";
+import { CommandHandler } from "@atomist/skill";
+import * as _ from "lodash";
 import { DeleteBranchConfiguration } from "../configuration";
 import { listStaleBranchesOnRepo } from "../listStaleBranches";
+import {
+	SaveSkillConfigurationMutation,
+	SaveSkillConfigurationMutationVariables,
+} from "../typings/types";
 
 export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 	const params = await ctx.parameters.prompt<{
@@ -46,29 +51,57 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 		};
 	}
 
-	const credential = await ctx.credential.resolve(
-		secret.gitHubAppToken({
-			owner: params.owner,
-			repo: params.name,
-		}),
-	);
-	const api = github.api(
-		repository.gitHub({
-			owner: params.owner,
-			repo: params.name,
-			credential,
-		}),
-	);
-
-	try {
-		await api.git.deleteRef({
-			owner: params.owner,
-			repo: params.name,
-			ref: `heads/${params.branch}`,
-		});
-	} catch (e) {
-		// ignore
-	}
+	await ctx.graphql.mutate<
+		SaveSkillConfigurationMutation,
+		SaveSkillConfigurationMutationVariables
+	>("saveSkillConfiguration.graphql", {
+		name: ctx.skill.name,
+		namespace: ctx.skill.namespace,
+		version: ctx.skill.version,
+		config: {
+			enabled: true,
+			name: cfg.name,
+			parameters: [
+				{
+					singleChoice: {
+						name: "deleteOn",
+						value: cfg.parameters.deleteOn,
+					},
+				},
+				{
+					boolean: {
+						name: "staleList",
+						value: cfg.parameters.staleList,
+					},
+				},
+				{
+					int: {
+						name: "staleThreshold",
+						value: cfg.parameters.staleThreshold,
+					},
+				},
+				{
+					stringArray: {
+						name: "staleExcludes",
+						value: [
+							...(cfg.parameters.staleExcludes || []),
+							`${params.owner}\/${params.name}#${params.branch}`, // eslint-disable-line no-useless-escape
+						],
+					},
+				},
+				{
+					repoFilter: {
+						name: "repos",
+						value: (cfg.parameters as any).repos,
+					},
+				},
+			],
+			resourceProviders: _.map(cfg.resourceProviders, (v, k) => ({
+				name: k,
+				selectedResourceProviders: v.selectedResourceProviders,
+			})),
+		},
+	});
 
 	return listStaleBranchesOnRepo(
 		cfg,

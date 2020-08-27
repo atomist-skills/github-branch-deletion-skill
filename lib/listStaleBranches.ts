@@ -228,51 +228,91 @@ export async function listStaleBranchesOnRepo(
 			});
 		});
 
-		let action;
+		let actions;
 		const branchesToDelete = staleBranches.filter(
 			b => !b.pullRequest || b.pullRequest.merged,
 		);
 		if (branchesToDelete.length === 1) {
-			action = buttonForCommand(
-				{
-					text: "Delete",
-				},
-				"deleteBranch",
-				{
-					name: repo.name,
-					owner: repo.owner,
-					branch: staleBranches[0].branch,
-					cfg: cfg.name,
-					apiUrl: repo.apiUrl,
-					defaultBranch: repo.defaultBranch,
-					channels: JSON.stringify(repo.channels),
-					msgId,
-				},
-			);
+			actions = [
+				buttonForCommand(
+					{
+						text: "Delete",
+					},
+					"deleteBranch",
+					{
+						name: repo.name,
+						owner: repo.owner,
+						branch: staleBranches[0].branch,
+						cfg: cfg.name,
+						apiUrl: repo.apiUrl,
+						defaultBranch: repo.defaultBranch,
+						channels: JSON.stringify(repo.channels),
+						msgId,
+					},
+				),
+				buttonForCommand(
+					{
+						text: "Ignore",
+					},
+					"addIgnore",
+					{
+						name: repo.name,
+						owner: repo.owner,
+						branch: staleBranches[0].branch,
+						cfg: cfg.name,
+						apiUrl: repo.apiUrl,
+						defaultBranch: repo.defaultBranch,
+						channels: JSON.stringify(repo.channels),
+						msgId,
+					},
+				),
+			];
 		} else {
-			action = menuForCommand(
-				{
-					text: "Delete",
-					options: _.orderBy(branchesToDelete, "name").map(b => ({
-						text: b.branch,
-						value: b.branch,
-					})),
-				},
-				"deleteBranch",
-				"branch",
-				{
-					name: repo.name,
-					owner: repo.owner,
-					cfg: cfg.name,
-					apiUrl: repo.apiUrl,
-					defaultBranch: repo.defaultBranch,
-					channels: JSON.stringify(repo.channels),
-					msgId: id,
-				},
-			);
+			actions = [
+				menuForCommand(
+					{
+						text: "Delete",
+						options: _.orderBy(branchesToDelete, "name").map(b => ({
+							text: b.branch,
+							value: b.branch,
+						})),
+					},
+					"deleteBranch",
+					"branch",
+					{
+						name: repo.name,
+						owner: repo.owner,
+						cfg: cfg.name,
+						apiUrl: repo.apiUrl,
+						defaultBranch: repo.defaultBranch,
+						channels: JSON.stringify(repo.channels),
+						msgId: id,
+					},
+				),
+				menuForCommand(
+					{
+						text: "Ignore",
+						options: _.orderBy(branchesToDelete, "name").map(b => ({
+							text: b.branch,
+							value: b.branch,
+						})),
+					},
+					"addIgnore",
+					"branch",
+					{
+						name: repo.name,
+						owner: repo.owner,
+						cfg: cfg.name,
+						apiUrl: repo.apiUrl,
+						defaultBranch: repo.defaultBranch,
+						channels: JSON.stringify(repo.channels),
+						msgId: id,
+					},
+				),
+			];
 		}
 
-		msg.attachments.slice(-1)[0].actions = [action];
+		msg.attachments.slice(-1)[0].actions = actions;
 
 		await ctx.message.send(
 			msg,
