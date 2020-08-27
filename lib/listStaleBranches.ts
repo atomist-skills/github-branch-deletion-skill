@@ -67,6 +67,13 @@ export async function listStateBranches(
 		),
 	);
 
+	const processState = await state.hydrate<{ previous: string }>(
+		cfg.name,
+		ctx,
+		{ previous: undefined },
+	);
+	const current = guid();
+
 	await PromisePool.for(filteredRepos)
 		.withConcurrency(5)
 		.process(r =>
@@ -81,9 +88,10 @@ export async function listStateBranches(
 					apiUrl: r.org.provider.apiUrl,
 				},
 				undefined,
+				{ previous: processState.previous, current },
 			),
 		);
-
+	await state.save({ previous: current }, cfg.name, ctx);
 	return status.success(`Processed stale branches`);
 }
 
@@ -98,6 +106,7 @@ export async function listStaleBranchesOnRepo(
 		channels: string[];
 	},
 	msgId: string,
+	processState?: { previous: string; current: string },
 ): Promise<void> {
 	const threshold = cfg.parameters.staleThreshold || 7;
 	const branchFilters = cfg.parameters.staleExcludes || [];
@@ -160,16 +169,14 @@ export async function listStaleBranchesOnRepo(
 	if (staleBranches.length > 0) {
 		let id;
 		if (!msgId) {
-			const counter = await state.hydrate<{ id: number }>(cfg.name, ctx, {
-				id: 0,
-			});
 			const prefix = `${ctx.skill.namespace}/${ctx.skill.name}/${repo.owner}/${repo.name}/${cfg.name}`;
-			await ctx.message.delete(
-				{ channels: repo.channels },
-				{ id: `${prefix}/${counter.id}` },
-			);
-			id = `${prefix}/${counter.id + 1}`;
-			await state.save({ id: counter.id + 1 }, cfg.name, ctx);
+			if (processState.previous) {
+				await ctx.message.delete(
+					{ channels: repo.channels },
+					{ id: `${prefix}/${processState.previous}` },
+				);
+			}
+			id = `${prefix}/${processState.current}`;
 		} else {
 			id = msgId;
 		}
