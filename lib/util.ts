@@ -35,3 +35,19 @@ export function truncateCommitMessage(message: string): string {
 	}
 	return titleParts.slice(0, i + addNext).join("");
 }
+
+export function formatDuration(
+	duration: number,
+	format = "d[d] h[h] m[m] s[s]",
+): string {
+	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	const moment = require("moment");
+	// The following require is needed to initialize the format function
+	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	const momentDurationFormatSetup = require("moment-duration-format");
+	momentDurationFormatSetup(moment);
+
+	return moment
+		.duration(duration, "millisecond")
+		.format(format, { trim: "both" });
+}

@@ -25,7 +25,6 @@ import {
 	slack,
 	status,
 	state,
-	log,
 } from "@atomist/skill";
 import { buttonForCommand, menuForCommand } from "@atomist/skill/lib/slack";
 import { PromisePool } from "@supercharge/promise-pool/dist/promise-pool";
@@ -40,7 +39,7 @@ import {
 	RepositoriesQuery,
 	RepositoriesQueryVariables,
 } from "./typings/types";
-import { truncateCommitMessage } from "./util";
+import { formatDuration, truncateCommitMessage } from "./util";
 
 export async function listStateBranches(
 	cfg: { name: string; parameters: DeleteBranchConfiguration },
@@ -66,7 +65,7 @@ export async function listStateBranches(
 			"repos",
 			ctx,
 		),
-	).filter(r => r.name === "bot-service");
+	);
 
 	const processState = await state.hydrate<{ previous: string }>(
 		cfg.name,
@@ -75,7 +74,7 @@ export async function listStateBranches(
 	);
 	const current = guid();
 
-	const { errors } = await PromisePool.for(filteredRepos)
+	await PromisePool.for(filteredRepos)
 		.withConcurrency(5)
 		.process(r =>
 			listStaleBranchesOnRepo(
@@ -191,6 +190,9 @@ export async function listStaleBranchesOnRepo(
 								branchData.commit.author?.login ||
 								branchData.commit.committer?.login,
 						},
+						timestamp:
+							branchData.commit.commit.author?.date ||
+							branchData.commit.commit.committer?.date,
 					},
 				});
 			}
@@ -232,7 +234,12 @@ export async function listStaleBranchesOnRepo(
 			let text = `${slack.url(
 				pr.commit.url,
 				slack.codeLine(pr.commit.sha.slice(0, 7)),
-			)} ${truncateCommitMessage(pr.commit.message)}`;
+			)} ${truncateCommitMessage(
+				pr.commit.message,
+			)} ${slack.separator()} ${formatDuration(
+				Date.now() - Date.parse(pr.commit.timestamp),
+				"d [days]",
+			)} ago`;
 			if (pr.pullRequest && !pr.pullRequest.merged) {
 				text = `${slack.url(
 					pr.pullRequest.url,
