@@ -181,7 +181,7 @@ export async function listStaleBranchesOnRepo(
 					commit: {
 						message: branchData.commit.commit.message,
 						sha: branchData.commit.sha,
-						url: branchData.commit.url,
+						url: (branchData.commit as any).html_url,
 						author: {
 							avatar:
 								branchData.commit.author?.avatar_url ||
@@ -238,7 +238,7 @@ export async function listStaleBranchesOnRepo(
 				pr.commit.message,
 			)} ${slack.separator()} ${formatDuration(
 				Date.now() - Date.parse(pr.commit.timestamp),
-				"d [days]",
+				"y [years], w [weeks], d [days]",
 			)} ago`;
 			if (pr.pullRequest && !pr.pullRequest.merged) {
 				text = `${slack.url(
