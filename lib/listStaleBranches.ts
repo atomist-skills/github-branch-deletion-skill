@@ -25,6 +25,7 @@ import {
 	slack,
 	status,
 	state,
+	log,
 } from "@atomist/skill";
 import { buttonForCommand, menuForCommand } from "@atomist/skill/lib/slack";
 import { PromisePool } from "@supercharge/promise-pool/dist/promise-pool";
@@ -65,7 +66,7 @@ export async function listStateBranches(
 			"repos",
 			ctx,
 		),
-	);
+	).filter(r => r.name === "bot-service");
 
 	const processState = await state.hydrate<{ previous: string }>(
 		cfg.name,
@@ -74,7 +75,7 @@ export async function listStateBranches(
 	);
 	const current = guid();
 
-	await PromisePool.for(filteredRepos)
+	const { errors } = await PromisePool.for(filteredRepos)
 		.withConcurrency(5)
 		.process(r =>
 			listStaleBranchesOnRepo(
@@ -163,6 +164,36 @@ export async function listStaleBranchesOnRepo(
 					});
 				}
 			}
+		} else {
+			const branchData = (
+				await api.repos.getBranch({
+					owner: repo.owner,
+					repo: repo.name,
+					branch: branch.name,
+				})
+			).data;
+			const commitDate = Date.parse(
+				branchData.commit.commit.author?.date ||
+					branchData.commit.commit.committer?.date,
+			);
+			if (commitDate < thresholdDate) {
+				staleBranches.push({
+					branch: branch.name,
+					commit: {
+						message: branchData.commit.commit.message,
+						sha: branchData.commit.sha,
+						url: branchData.commit.url,
+						author: {
+							avatar:
+								branchData.commit.author?.avatar_url ||
+								branchData.commit.committer?.avatar_url,
+							login:
+								branchData.commit.author?.login ||
+								branchData.commit.committer?.login,
+						},
+					},
+				});
+			}
 		}
 	}
 
@@ -202,7 +233,7 @@ export async function listStaleBranchesOnRepo(
 				pr.commit.url,
 				slack.codeLine(pr.commit.sha.slice(0, 7)),
 			)} ${truncateCommitMessage(pr.commit.message)}`;
-			if (!pr.pullRequest?.merged) {
+			if (pr.pullRequest && !pr.pullRequest.merged) {
 				text = `${slack.url(
 					pr.pullRequest.url,
 					slack.bold(
