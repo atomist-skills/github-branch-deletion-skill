@@ -182,7 +182,9 @@ export async function listStaleBranchesOnRepo(
 		}
 		const msg = slack.infoMessage(
 			"Stale Branches",
-			`No activity on the following ${staleBranches.length} ${
+			`No activity on the following${
+				staleBranches.length > 1 ? " " + staleBranches.length : ""
+			} ${
 				staleBranches.length === 1 ? "branch" : "branches"
 			} for the last ${threshold} days:`,
 			ctx,
