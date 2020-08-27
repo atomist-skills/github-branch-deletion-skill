@@ -184,11 +184,9 @@ export async function listStaleBranchesOnRepo(
 			"Stale Branches",
 			`No activity on the following${
 				staleBranches.length > 1 ? " " + staleBranches.length : ""
-			} ${
-				staleBranches.length === 1 ? "branch" : "branches"
-			} for the last${threshold > 1 ? " " + threshold : ""} ${
-				threshold === 1 ? "day" : "days"
-			}:`,
+			} ${staleBranches.length === 1 ? "branch" : "branches"} in last${
+				threshold > 1 ? " " + threshold : ""
+			} ${threshold === 1 ? "day" : "days"}:`,
 			ctx,
 		);
 		msg.attachments[0].footer = `${
