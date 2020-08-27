@@ -24,6 +24,7 @@ import {
 	secret,
 	slack,
 	status,
+	state,
 } from "@atomist/skill";
 import { buttonForCommand, menuForCommand } from "@atomist/skill/lib/slack";
 import { PromisePool } from "@supercharge/promise-pool/dist/promise-pool";
@@ -157,7 +158,21 @@ export async function listStaleBranchesOnRepo(
 	}
 
 	if (staleBranches.length > 0) {
-		const id = msgId || guid();
+		let id;
+		if (!msgId) {
+			const counter = await state.hydrate<{ id: number }>(cfg.name, ctx, {
+				id: 0,
+			});
+			const prefix = `${ctx.skill.namespace}/${ctx.skill.name}/${repo.owner}/${repo.name}/${cfg.name}`;
+			await ctx.message.delete(
+				{ channels: repo.channels },
+				{ id: `${prefix}/${counter.id}` },
+			);
+			id = `${prefix}/${counter.id + 1}`;
+			await state.save({ id: counter.id + 1 }, cfg.name, ctx);
+		} else {
+			id = msgId;
+		}
 		const msg = slack.infoMessage(
 			"Stale Branches",
 			`No activity on the following ${staleBranches.length} ${

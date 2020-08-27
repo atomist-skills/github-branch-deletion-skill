@@ -88,7 +88,7 @@ export const Skill = skill<
 		schedule: {
 			type: ParameterType.Schedule,
 			displayName: "Process branches",
-			defaultValue: "*/15 * * * *",
+			defaultValue: "*/15 * * * *", // 0 8 * * *
 			description: "Cron expression to process stale branches",
 			required: false,
 			visibility: ParameterVisibility.Hidden,
