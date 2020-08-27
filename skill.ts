@@ -67,7 +67,7 @@ export const Skill = skill<
 			type: ParameterType.Boolean,
 			displayName: "List stale branches",
 			description: "Find and list stale branches in repositories",
-			defaultValue: true,
+			defaultValue: false,
 			required: false,
 		},
 		staleThreshold: {
