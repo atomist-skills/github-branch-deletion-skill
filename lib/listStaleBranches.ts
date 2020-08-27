@@ -199,7 +199,10 @@ export async function listStaleBranchesOnRepo(
 		});
 
 		let action;
-		if (staleBranches.length === 1) {
+		const branchesToDelete = staleBranches.filter(
+			b => !b.pullRequest || b.pullRequest.merged,
+		);
+		if (branchesToDelete.length === 1) {
 			action = buttonForCommand(
 				{
 					text: "Delete",
@@ -220,7 +223,7 @@ export async function listStaleBranchesOnRepo(
 			action = menuForCommand(
 				{
 					text: "Delete",
-					options: _.orderBy(staleBranches, "name").map(b => ({
+					options: _.orderBy(branchesToDelete, "name").map(b => ({
 						text: b.branch,
 						value: b.branch,
 					})),
