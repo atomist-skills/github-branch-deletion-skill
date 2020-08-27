@@ -69,13 +69,18 @@ export async function listStateBranches(
 	await PromisePool.for(filteredRepos)
 		.withConcurrency(5)
 		.process(r =>
-			listStaleBranchesOnRepo(cfg, ctx, {
-				owner: r.owner,
-				name: r.name,
-				defaultBranch: r.defaultBranch,
-				channels: r.channels.map(c => c.name),
-				apiUrl: r.org.provider.apiUrl,
-			}),
+			listStaleBranchesOnRepo(
+				cfg,
+				ctx,
+				{
+					owner: r.owner,
+					name: r.name,
+					defaultBranch: r.defaultBranch,
+					channels: r.channels.map(c => c.name),
+					apiUrl: r.org.provider.apiUrl,
+				},
+				undefined,
+			),
 		);
 
 	return status.success(`Processed stale branches`);
@@ -91,7 +96,7 @@ export async function listStaleBranchesOnRepo(
 		defaultBranch: string;
 		channels: string[];
 	},
-	msgId: string = guid(),
+	msgId: string,
 ): Promise<void> {
 	const threshold = cfg.parameters.staleThreshold || 7;
 	const branchFilters = cfg.parameters.staleExcludes || [];
@@ -148,6 +153,7 @@ export async function listStaleBranchesOnRepo(
 	}
 
 	if (staleBranches.length > 0) {
+		const id = msgId || guid();
 		const msg = slack.infoMessage(
 			"Stale Branches",
 			`No activity on the following ${staleBranches.length} ${
@@ -228,7 +234,7 @@ export async function listStaleBranchesOnRepo(
 					apiUrl: repo.apiUrl,
 					defaultBranch: repo.defaultBranch,
 					channels: JSON.stringify(repo.channels),
-					msgId,
+					msgId: id,
 				},
 			);
 		}
@@ -240,8 +246,10 @@ export async function listStaleBranchesOnRepo(
 			{
 				channels: repo.channels,
 			},
-			{ id: msgId },
+			{ id },
 		);
+	} else if (msgId) {
+		await ctx.message.delete({ channels: repo.channels }, { id: msgId });
 	}
 }
 
