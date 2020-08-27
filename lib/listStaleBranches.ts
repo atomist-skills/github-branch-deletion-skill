@@ -186,7 +186,9 @@ export async function listStaleBranchesOnRepo(
 				staleBranches.length > 1 ? " " + staleBranches.length : ""
 			} ${
 				staleBranches.length === 1 ? "branch" : "branches"
-			} for the last ${threshold} days:`,
+			} for the last${threshold > 1 ? " " + threshold : ""} ${
+				threshold === 1 ? "day" : "days"
+			}:`,
 			ctx,
 		);
 		msg.attachments[0].footer = `${
