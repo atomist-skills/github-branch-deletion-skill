@@ -28,7 +28,7 @@ import { DeleteBranchConfiguration } from "../configuration";
 import {
 	CommitQuery,
 	CommitQueryVariables,
-	ListStaleBranhesOnScheduleSubscription,
+	ListStaleBranchesOnScheduleSubscription,
 	PullRequestQuery,
 	PullRequestQueryVariables,
 	RepositoriesQuery,
@@ -37,7 +37,7 @@ import {
 import * as _ from "lodash";
 
 export const handler: EventHandler<
-	ListStaleBranhesOnScheduleSubscription,
+	ListStaleBranchesOnScheduleSubscription,
 	DeleteBranchConfiguration
 > = async ctx => {
 	const cfg = ctx.configuration?.[0];
@@ -71,7 +71,7 @@ export const handler: EventHandler<
 
 async function listStaleBranchOnRepo(
 	ctx: EventContext<
-		ListStaleBranhesOnScheduleSubscription,
+		ListStaleBranchesOnScheduleSubscription,
 		DeleteBranchConfiguration
 	>,
 	repo: RepositoriesQuery["Repo"][0],
