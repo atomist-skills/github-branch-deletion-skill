@@ -135,7 +135,11 @@ export async function listStaleBranchesOnRepo(
 				const pr = await ctx.graphql.query<
 					PullRequestQuery,
 					PullRequestQueryVariables
-				>("pullRequest.graphql", { branch: branch.name });
+				>("pullRequest.graphql", {
+					branch: branch.name,
+					owner: repo.owner,
+					repo: repo.name,
+				});
 				if (pr.PullRequest?.[0]) {
 					staleBranches.push({
 						branch: branch.name,
