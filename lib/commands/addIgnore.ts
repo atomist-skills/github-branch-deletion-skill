@@ -85,7 +85,7 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 						name: "staleExcludes",
 						value: [
 							...(cfg.parameters.staleExcludes || []),
-							`${params.owner}\/${params.name}#${params.branch}`, // eslint-disable-line no-useless-escape
+							`${params.owner}\\/${params.name}#${params.branch}`,
 						],
 					},
 				},
