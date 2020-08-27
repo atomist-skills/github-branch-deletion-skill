@@ -1,0 +1,18 @@
+query repositories {
+  Repo {
+    id
+    owner
+    name
+    defaultBranch
+    org @required {
+      id
+      provider(providerType: github_com) @required {
+        providerType
+        apiUrl
+      }
+    }
+    channels @required {
+      name
+    }
+  }
+}

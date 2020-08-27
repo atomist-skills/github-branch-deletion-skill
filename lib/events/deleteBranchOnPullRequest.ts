@@ -22,11 +22,8 @@ import {
 	github,
 	status,
 } from "@atomist/skill";
+import { DeleteBranchConfiguration } from "../configuration";
 import { DeleteBranchOnPullRequestSubscription } from "../typings/types";
-
-export interface DeleteBranchConfiguration {
-	deleteOn?: "on-close" | "on-merge";
-}
 
 export const handler: EventHandler<
 	DeleteBranchOnPullRequestSubscription,

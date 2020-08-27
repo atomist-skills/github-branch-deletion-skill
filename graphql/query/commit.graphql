@@ -1,0 +1,12 @@
+query commit($sha: String!) {
+  Commit(sha: $sha) {
+    timestamp
+    message
+    sha
+    url
+    author {
+      login
+      avatar
+    }
+  }
+}

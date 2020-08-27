@@ -21,7 +21,7 @@ import {
 	secret,
 	status,
 } from "@atomist/skill";
-import { DeleteBranchConfiguration } from "./deleteBranchOnPullRequest";
+import { DeleteBranchConfiguration } from "../configuration";
 import {
 	ConvergePullRequestBranchDeletionLabelSubscription,
 	PullRequestAction,

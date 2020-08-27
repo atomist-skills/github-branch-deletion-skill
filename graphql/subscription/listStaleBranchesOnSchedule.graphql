@@ -1,0 +1,6 @@
+subscription listStaleBranhesOnSchedule {
+  OnSchedule {
+    configurationName
+    parameterName
+  }
+}

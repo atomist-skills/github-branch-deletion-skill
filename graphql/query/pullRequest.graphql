@@ -1,0 +1,8 @@
+query pullRequest($branch: String) {
+  PullRequest(state: "open", branchName: $branch) {
+    number
+    title
+    url
+    merged
+  }
+}
