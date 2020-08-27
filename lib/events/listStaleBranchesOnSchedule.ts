@@ -23,6 +23,7 @@ import {
 	github,
 	slack,
 } from "@atomist/skill";
+import { menuForCommand } from "@atomist/skill/lib/slack";
 import { PromisePool } from "@supercharge/promise-pool/dist/promise-pool";
 import { DeleteBranchConfiguration } from "../configuration";
 import {
@@ -35,6 +36,7 @@ import {
 	RepositoriesQueryVariables,
 } from "../typings/types";
 import * as _ from "lodash";
+import { truncateCommitMessage } from "../util";
 
 export const handler: EventHandler<
 	ListStaleBranchesOnScheduleSubscription,
@@ -153,11 +155,13 @@ async function listStaleBranchOnRepo(
 			let text = `${slack.url(
 				pr.commit.url,
 				slack.codeLine(pr.commit.sha.slice(0, 7)),
-			)} ${pr.commit.message.split("\n")[0]}`;
+			)} ${truncateCommitMessage(pr.commit.message)}`;
 			if (!pr.pullRequest?.merged) {
 				text = `${slack.url(
 					pr.pullRequest.url,
-					`#${pr.pullRequest.number}: ${pr.pullRequest.title}`,
+					slack.bold(
+						`#${pr.pullRequest.number}: ${pr.pullRequest.title}`,
+					),
 				)}\n${text}`;
 			}
 			msg.attachments.push({
@@ -175,6 +179,22 @@ async function listStaleBranchOnRepo(
 				mrkdwn_in: ["text"],
 			});
 		});
+
+		msg.attachments.slice(-1)[0].actions = [
+			menuForCommand(
+				{
+					text: "Delete",
+					options: _.orderBy(staleBranches, "name").map(b => ({
+						text: b.branch,
+						value: b.branch,
+					})),
+				},
+				"deleteBranch",
+				"branch",
+				{ repo: repo.name, owner: repo.owner },
+			),
+		];
+
 		await ctx.message.send(msg, {
 			channels: repo.channels.map(c => c.name),
 		});
