@@ -25,7 +25,7 @@ import {
 	slack,
 	status,
 } from "@atomist/skill";
-import { menuForCommand } from "@atomist/skill/lib/slack";
+import { buttonForCommand, menuForCommand } from "@atomist/skill/lib/slack";
 import { PromisePool } from "@supercharge/promise-pool/dist/promise-pool";
 import * as _ from "lodash";
 import { DeleteBranchConfiguration } from "./configuration";
@@ -192,8 +192,26 @@ export async function listStaleBranchesOnRepo(
 			});
 		});
 
-		msg.attachments.slice(-1)[0].actions = [
-			menuForCommand(
+		let action;
+		if (staleBranches.length === 1) {
+			action = buttonForCommand(
+				{
+					text: "Delete",
+				},
+				"deleteBranch",
+				{
+					name: repo.name,
+					owner: repo.owner,
+					branch: staleBranches[0].branch,
+					cfg: cfg.name,
+					apiUrl: repo.apiUrl,
+					defaultBranch: repo.defaultBranch,
+					channels: JSON.stringify(repo.channels),
+					msgId,
+				},
+			);
+		} else {
+			action = menuForCommand(
 				{
 					text: "Delete",
 					options: _.orderBy(staleBranches, "name").map(b => ({
@@ -212,8 +230,10 @@ export async function listStaleBranchesOnRepo(
 					channels: JSON.stringify(repo.channels),
 					msgId,
 				},
-			),
-		];
+			);
+		}
+
+		msg.attachments.slice(-1)[0].actions = [action];
 
 		await ctx.message.send(
 			msg,
