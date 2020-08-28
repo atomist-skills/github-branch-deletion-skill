@@ -299,6 +299,15 @@ No commits on the following${
 					value: "delete",
 				});
 			}
+			if (!pr.pullRequest) {
+				options.push({
+					text: {
+						type: "plain_text",
+						text: "Raise PR",
+					},
+					value: "raise_pr",
+				});
+			}
 
 			msg.blocks.push(
 				{
