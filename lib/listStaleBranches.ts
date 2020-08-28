@@ -276,7 +276,7 @@ No commits on the following${
 					slack.bold(
 						`#${pr.pullRequest.number}: ${pr.pullRequest.title}`,
 					),
-				)}\n${text}`;
+				)}`;
 			}
 			const iconUrl = `https://images.atomist.com/rug/pull-request-${
 				pr.pullRequest
