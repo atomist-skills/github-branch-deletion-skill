@@ -297,6 +297,13 @@ No commits on the following${
 					value: "delete",
 				});
 			}
+			options.push({
+				text: {
+					type: "plain_text",
+					text: "Ignore",
+				},
+				value: "ignore",
+			});
 			if (!pr.pullRequest) {
 				options.push({
 					text: {
@@ -324,16 +331,7 @@ ${text}`,
 								type: "plain_text",
 								text: "Actions",
 							},
-							options: [
-								...options,
-								{
-									text: {
-										type: "plain_text",
-										text: "Ignore",
-									},
-									value: "ignore",
-								},
-							],
+							options,
 						} as slack.StaticOptionElement,
 						"branchAction",
 						{
