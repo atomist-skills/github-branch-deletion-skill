@@ -294,10 +294,14 @@ No commits on the following${
 ${text}`,
 					},
 					accessory: slack.block.elementForCommand<
-						slack.OverflowElement
+						slack.StaticOptionElement
 					>(
 						{
-							type: "overflow",
+							type: "static_select",
+							placeholder: {
+								type: "plain_text",
+								text: "Actions",
+							},
 							options: [
 								{
 									text: {
@@ -314,12 +318,12 @@ ${text}`,
 									value: "ignore",
 								},
 							],
-						} as slack.OverflowElement,
+						} as slack.StaticOptionElement,
 						"branchAction",
 						{
 							name: repo.name,
 							owner: repo.owner,
-							branch: staleBranches[0].branch,
+							branch: pr.branch,
 							cfg: cfg.name,
 							apiUrl: repo.apiUrl,
 							defaultBranch: repo.defaultBranch,
