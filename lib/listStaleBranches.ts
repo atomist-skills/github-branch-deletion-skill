@@ -263,22 +263,21 @@ No commits on the following${
 			const text = `${slack.url(
 				pr.commit.url,
 				slack.codeLine(pr.commit.sha.slice(0, 7)),
-			)} ${truncateCommitMessage(
-				pr.commit.message,
-			)} ${slack.separator()} ${formatDuration(
+			)} ${truncateCommitMessage(pr.commit.message)}`;
+			let pullRequest;
+			const duration = `${slack.separator()} ${formatDuration(
 				Date.now() - Date.parse(pr.commit.timestamp),
 				"y [years], w [weeks], d [days]",
 			)} ago`;
-			let pullRequest;
 			if (pr.pullRequest) {
 				pullRequest = `${slack.url(
 					pr.pullRequest.url,
 					slack.bold(
 						`#${pr.pullRequest.number}: ${pr.pullRequest.title}`,
 					),
-				)}`;
+				)} ${duration}`;
 			} else {
-				pullRequest = "no pull request";
+				pullRequest = `no pull request ${duration}`;
 			}
 			const iconUrl = pr.pullRequest
 				? pr.pullRequest.merged
