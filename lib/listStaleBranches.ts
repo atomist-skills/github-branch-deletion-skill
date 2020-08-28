@@ -277,14 +277,29 @@ No commits on the following${
 						`#${pr.pullRequest.number}: ${pr.pullRequest.title}`,
 					),
 				)}`;
+			} else {
+				pullRequest = "no pull request";
 			}
 			const iconUrl = `https://images.atomist.com/rug/pull-request-${
 				pr.pullRequest
 					? pr.pullRequest.merged
 						? "merged"
-						: "open"
-					: "closed"
+						: pr.pullRequest.state === "open"
+						? "open"
+						: "closed"
+					: "open"
 			}.png`;
+			const options = [];
+			if (!pr.pullRequest || pr.pullRequest.state !== "open") {
+				options.push({
+					text: {
+						type: "plain_text",
+						text: "Delete",
+					},
+					value: "delete",
+				});
+			}
+
 			msg.blocks.push(
 				{
 					type: "section",
@@ -303,13 +318,7 @@ ${text}`,
 								text: "Actions",
 							},
 							options: [
-								{
-									text: {
-										type: "plain_text",
-										text: "Delete",
-									},
-									value: "delete",
-								},
+								...options,
 								{
 									text: {
 										type: "plain_text",

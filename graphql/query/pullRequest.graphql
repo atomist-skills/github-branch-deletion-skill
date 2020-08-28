@@ -1,9 +1,10 @@
 query pullRequest($repo: String!, $owner: String!, $branch: String) {
-  PullRequest(state: "open", branchName: $branch) {
+  PullRequest(branchName: $branch) {
     number
     title
     url
     merged
+    state
     repo(owner: $owner, name: $repo) @required {
       name
       owner
