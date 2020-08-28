@@ -26,7 +26,6 @@ import {
 	status,
 	state,
 } from "@atomist/skill";
-import { buttonForCommand, menuForCommand } from "@atomist/skill/lib/slack";
 import { PromisePool } from "@supercharge/promise-pool/dist/promise-pool";
 import * as _ from "lodash";
 import { DeleteBranchConfiguration } from "./configuration";
@@ -213,25 +212,55 @@ export async function listStaleBranchesOnRepo(
 		} else {
 			id = msgId;
 		}
-		const msg = slack.infoMessage(
-			"Stale Branches",
-			`No activity on the following${
-				staleBranches.length > 1 ? " " + staleBranches.length : ""
-			} ${staleBranches.length === 1 ? "branch" : "branches"} in last${
-				threshold > 1 ? " " + threshold : ""
-			} ${threshold === 1 ? "day" : "days"}:`,
-			ctx,
-		);
-		msg.attachments[0].footer = `${
-			msg.attachments[0].footer
-		} \u00B7 ${slack.url(
-			`https://go.atomist.com/manage/${
-				ctx.workspaceId
-			}/skills/configure/${ctx.skill.id}/${encodeURIComponent(cfg.name)}`,
-			"Configure",
-		)}`;
+
+		const msg: slack.SlackMessage = {
+			blocks: [
+				{
+					type: "section",
+					text: {
+						type: "mrkdwn",
+						text: `*Stale Branches*
+No commits on the following${
+							staleBranches.length > 1
+								? " " + staleBranches.length
+								: ""
+						} ${
+							staleBranches.length === 1 ? "branch" : "branches"
+						} in last${threshold > 1 ? " " + threshold : ""} ${
+							threshold === 1 ? "day" : "days"
+						}:`,
+					},
+				} as slack.SectionBlock,
+				{
+					type: "context",
+					elements: [
+						{
+							type: "image",
+							image_url:
+								"https://images.atomist.com/logo/atomist-black-mark-xsmall.png",
+							alt_text: "Atomist icon",
+						},
+						{
+							type: "mrkdwn",
+							text: `${ctx.skill.namespace}/${
+								ctx.skill.name
+							} \u00B7 ${slack.url(
+								`https://go.atomist.com/manage/${
+									ctx.workspaceId
+								}/skills/configure/${
+									ctx.skill.id
+								}/${encodeURIComponent(cfg.name)}`,
+								"Configure",
+							)}`,
+						},
+					],
+				} as slack.ContextBlock,
+				{ type: "divider" } as slack.DividerBlock,
+			],
+		};
+
 		_.orderBy(staleBranches, ["branch"]).forEach(pr => {
-			let text = `${slack.url(
+			const text = `${slack.url(
 				pr.commit.url,
 				slack.codeLine(pr.commit.sha.slice(0, 7)),
 			)} ${truncateCommitMessage(
@@ -240,115 +269,84 @@ export async function listStaleBranchesOnRepo(
 				Date.now() - Date.parse(pr.commit.timestamp),
 				"y [years], w [weeks], d [days]",
 			)} ago`;
-			if (pr.pullRequest && !pr.pullRequest.merged) {
-				text = `${slack.url(
+			let pullRequest = "";
+			if (pr.pullRequest) {
+				pullRequest = `${slack.url(
 					pr.pullRequest.url,
 					slack.bold(
 						`#${pr.pullRequest.number}: ${pr.pullRequest.title}`,
 					),
 				)}\n${text}`;
 			}
-			msg.attachments.push({
-				author_icon: `https://images.atomist.com/rug/pull-request-${
-					pr.pullRequest
-						? pr.pullRequest.merged
-							? "merged"
-							: "open"
-						: "closed"
-				}.png`,
-				author_name: pr.branch,
-				author_link: pr.commit.url,
-				fallback: pr.branch,
-				text,
-				mrkdwn_in: ["text"],
-			});
+			const iconUrl = `https://images.atomist.com/rug/pull-request-${
+				pr.pullRequest
+					? pr.pullRequest.merged
+						? "merged"
+						: "open"
+					: "closed"
+			}.png`;
+			msg.blocks.push(
+				{
+					type: "section",
+					text: {
+						type: "mrkdwn",
+						text: `${slack.bold(pr.branch)}
+${text}`,
+					},
+					accessory: slack.block.elementForCommand<
+						slack.OverflowElement
+					>(
+						{
+							type: "overflow",
+							options: [
+								{
+									text: {
+										type: "plain_text",
+										text: "Delete",
+									},
+									value: "delete",
+								},
+								{
+									text: {
+										type: "plain_text",
+										text: "Ignore",
+									},
+									value: "ignore",
+								},
+							],
+						} as slack.OverflowElement,
+						"branchAction",
+						{
+							name: repo.name,
+							owner: repo.owner,
+							branch: staleBranches[0].branch,
+							cfg: cfg.name,
+							apiUrl: repo.apiUrl,
+							defaultBranch: repo.defaultBranch,
+							channels: JSON.stringify(repo.channels),
+							msgId: id,
+						},
+						"action",
+					),
+				} as slack.SectionBlock,
+				{
+					type: "context",
+					elements: [
+						{
+							type: "image",
+							image_url: iconUrl,
+							alt_text: "PR",
+						},
+						{
+							type: "mrkdwn",
+							text: pullRequest,
+						},
+					],
+				} as slack.ContextBlock,
+			);
 		});
 
-		let actions;
-		const branchesToDelete = staleBranches.filter(
-			b => !b.pullRequest || b.pullRequest.merged,
-		);
-		if (branchesToDelete.length === 1) {
-			actions = [
-				buttonForCommand(
-					{
-						text: "Delete",
-					},
-					"deleteBranch",
-					{
-						name: repo.name,
-						owner: repo.owner,
-						branch: staleBranches[0].branch,
-						cfg: cfg.name,
-						apiUrl: repo.apiUrl,
-						defaultBranch: repo.defaultBranch,
-						channels: JSON.stringify(repo.channels),
-						msgId: id,
-					},
-				),
-				buttonForCommand(
-					{
-						text: "Ignore",
-					},
-					"addIgnore",
-					{
-						name: repo.name,
-						owner: repo.owner,
-						branch: staleBranches[0].branch,
-						cfg: cfg.name,
-						apiUrl: repo.apiUrl,
-						defaultBranch: repo.defaultBranch,
-						channels: JSON.stringify(repo.channels),
-						msgId: id,
-					},
-				),
-			];
-		} else {
-			actions = [
-				menuForCommand(
-					{
-						text: "Delete",
-						options: _.orderBy(branchesToDelete, "name").map(b => ({
-							text: b.branch,
-							value: b.branch,
-						})),
-					},
-					"deleteBranch",
-					"branch",
-					{
-						name: repo.name,
-						owner: repo.owner,
-						cfg: cfg.name,
-						apiUrl: repo.apiUrl,
-						defaultBranch: repo.defaultBranch,
-						channels: JSON.stringify(repo.channels),
-						msgId: id,
-					},
-				),
-				menuForCommand(
-					{
-						text: "Ignore",
-						options: _.orderBy(branchesToDelete, "name").map(b => ({
-							text: b.branch,
-							value: b.branch,
-						})),
-					},
-					"addIgnore",
-					"branch",
-					{
-						name: repo.name,
-						owner: repo.owner,
-						cfg: cfg.name,
-						apiUrl: repo.apiUrl,
-						defaultBranch: repo.defaultBranch,
-						channels: JSON.stringify(repo.channels),
-						msgId: id,
-					},
-				),
-			];
-		}
-
-		msg.attachments.slice(-1)[0].actions = actions;
+		msg.blocks.push({ type: "divider" } as slack.DividerBlock);
 
 		await ctx.message.send(
 			msg,
