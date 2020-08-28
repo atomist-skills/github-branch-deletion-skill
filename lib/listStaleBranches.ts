@@ -280,15 +280,13 @@ No commits on the following${
 			} else {
 				pullRequest = "no pull request";
 			}
-			const iconUrl = `https://images.atomist.com/rug/pull-request-${
-				pr.pullRequest
-					? pr.pullRequest.merged
-						? "merged"
-						: pr.pullRequest.state === "open"
-						? "open"
-						: "closed"
-					: "open"
-			}.png`;
+			const iconUrl = pr.pullRequest
+				? pr.pullRequest.merged
+					? "https://images.atomist.com/rug/pull-request-merged.png"
+					: pr.pullRequest.state === "open"
+					? "https://images.atomist.com/rug/pull-request-open.png"
+					: "https://images.atomist.com/rug/pull-request-closed.png"
+				: "https://images.atomist.com/rug/branch-open.png";
 			const options = [];
 			if (!pr.pullRequest || pr.pullRequest.state !== "open") {
 				options.push({
