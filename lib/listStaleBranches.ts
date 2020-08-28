@@ -269,7 +269,7 @@ No commits on the following${
 				Date.now() - Date.parse(pr.commit.timestamp),
 				"y [years], w [weeks], d [days]",
 			)} ago`;
-			let pullRequest = "";
+			let pullRequest;
 			if (pr.pullRequest) {
 				pullRequest = `${slack.url(
 					pr.pullRequest.url,
@@ -337,10 +337,14 @@ ${text}`,
 							image_url: iconUrl,
 							alt_text: "PR",
 						},
-						{
-							type: "mrkdwn",
-							text: pullRequest,
-						},
+						...(pullRequest
+							? [
+									{
+										type: "mrkdwn",
+										text: pullRequest,
+									},
+							  ]
+							: []),
 					],
 				} as slack.ContextBlock,
 			);
