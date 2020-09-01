@@ -226,7 +226,9 @@ export async function listStaleBranchesOnRepo(
 					type: "section",
 					text: {
 						type: "mrkdwn",
-						text: `*Stale Branches*
+						text: `*Stale Branches* for ${slack.codeLine(
+							`${repo.owner}/${repo.name}`,
+						)}
 No commits on the following${
 							branches.length > 1 ? " " + branches.length : ""
 						} ${
