@@ -54,6 +54,6 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 		{ ...params, channels: JSON.parse(params.channels) },
 		params.msgId,
 		undefined,
-		params.page,
+		+params.page,
 	);
 };
