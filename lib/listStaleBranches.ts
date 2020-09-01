@@ -351,7 +351,6 @@ ${text}`,
 						alt_text: "Atomist icon",
 					},
 					{
-						// https://go.atomist.com/T29E48P34/manage/skills/configure/d40d1a80-fe86-4656-8e97-417f6e7a6814/all%20repos
 						type: "mrkdwn",
 						text: `${ctx.skill.namespace}/${
 							ctx.skill.name

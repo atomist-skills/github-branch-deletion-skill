@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-import { CommandHandler } from "@atomist/skill";
+import {
+	CommandContext,
+	CommandHandler,
+	Configuration,
+	github,
+	repository,
+	secret,
+} from "@atomist/skill";
 import * as _ from "lodash";
 import { DeleteBranchConfiguration } from "../configuration";
 import { listStaleBranchesOnRepo } from "../listStaleBranches";
@@ -23,17 +30,20 @@ import {
 	SaveSkillConfigurationMutationVariables,
 } from "../typings/types";
 
+interface BranchAction {
+	owner: string;
+	name: string;
+	branch: string;
+	apiUrl: string;
+	defaultBranch: string;
+	msgId: string;
+	cfg: string;
+	channels: string;
+	action: "ignore" | "delete" | "raise_pr";
+}
+
 export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
-	const params = await ctx.parameters.prompt<{
-		owner: string;
-		name: string;
-		branch: string;
-		apiUrl: string;
-		defaultBranch: string;
-		msgId: string;
-		cfg: string;
-		channels: string;
-	}>({
+	const params = await ctx.parameters.prompt<BranchAction>({
 		owner: {},
 		name: {},
 		branch: {},
@@ -42,6 +52,7 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 		defaultBranch: {},
 		apiUrl: {},
 		channels: {},
+		action: {},
 	});
 	const cfg = ctx.configuration.find(c => c.name === params.cfg);
 	if (!cfg) {
@@ -51,6 +62,28 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 		};
 	}
 
+	switch (params.action) {
+		case "ignore":
+			await ignoreBranch(params, cfg, ctx);
+			break;
+		case "delete":
+			await deleteBranch(params, cfg, ctx);
+			break;
+	}
+
+	return listStaleBranchesOnRepo(
+		cfg,
+		ctx,
+		{ ...params, channels: JSON.parse(params.channels) },
+		params.msgId,
+	);
+};
+
+async function ignoreBranch(
+	params: BranchAction,
+	cfg: Configuration<DeleteBranchConfiguration>,
+	ctx: CommandContext,
+): Promise<void> {
 	await ctx.graphql.mutate<
 		SaveSkillConfigurationMutation,
 		SaveSkillConfigurationMutationVariables
@@ -102,11 +135,34 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 			})),
 		},
 	});
+}
 
-	return listStaleBranchesOnRepo(
-		cfg,
-		ctx,
-		{ ...params, channels: JSON.parse(params.channels) },
-		params.msgId,
+async function deleteBranch(
+	params: BranchAction,
+	cfg: Configuration<DeleteBranchConfiguration>,
+	ctx: CommandContext,
+): Promise<void> {
+	const credential = await ctx.credential.resolve(
+		secret.gitHubAppToken({
+			owner: params.owner,
+			repo: params.name,
+		}),
 	);
-};
+	const api = github.api(
+		repository.gitHub({
+			owner: params.owner,
+			repo: params.name,
+			credential,
+		}),
+	);
+
+	try {
+		await api.git.deleteRef({
+			owner: params.owner,
+			repo: params.name,
+			ref: `heads/${params.branch}`,
+		});
+	} catch (e) {
+		// ignore
+	}
+}
