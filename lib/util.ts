@@ -49,5 +49,5 @@ export function formatDuration(
 
 	return moment
 		.duration(duration, "millisecond")
-		.format(format, { trim: "both" });
+		.format(format, { trim: "all", largest: 2 });
 }

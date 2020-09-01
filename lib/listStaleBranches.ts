@@ -248,7 +248,7 @@ No commits on the following${
 			let pullRequest;
 			const duration = `${slack.separator()} ${formatDuration(
 				Date.now() - Date.parse(pr.commit.timestamp),
-				"y [years], m [months], w [weeks], d [days]",
+				"y [years], w [weeks], d [days], h [hours], m [minutes]",
 			)} ago`;
 			if (pr.pullRequest) {
 				pullRequest = `${slack.url(
