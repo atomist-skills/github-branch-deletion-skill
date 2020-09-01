@@ -399,7 +399,7 @@ ${text}`,
 					),
 				);
 			}
-			if (page < staleBranchesPages.length) {
+			if (page < staleBranchesPages.length - 1) {
 				paging.push(
 					slack.block.elementForCommand<slack.ButtonElement>(
 						{
