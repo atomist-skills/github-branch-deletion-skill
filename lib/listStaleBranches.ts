@@ -138,9 +138,7 @@ export async function listStaleBranchesOnRepo(
 		commit: CommitQuery["Commit"][0];
 	}> = [];
 
-	const branchPages = _.chunk(_.orderBy(branches, ["name"]), 2);
-
-	for (const branch of branchPages[page] || []) {
+	for (const branch of branches) {
 		const commit = await ctx.graphql.query<
 			CommitQuery,
 			CommitQueryVariables
@@ -205,7 +203,9 @@ export async function listStaleBranchesOnRepo(
 		}
 	}
 
-	if (branches.length > 0) {
+	const branchPages = _.chunk(_.orderBy(staleBranches, ["name"]), 2);
+
+	if (staleBranches.length > 0) {
 		let id;
 		if (!msgId) {
 			const prefix = `${ctx.skill.namespace}/${ctx.skill.name}/${repo.owner}/${repo.name}/${cfg.name}`;
@@ -240,7 +240,7 @@ No commits on the following${
 			],
 		};
 
-		staleBranches.forEach(pr => {
+		branchPages[page].forEach(pr => {
 			const text = `${slack.url(
 				pr.commit.url,
 				slack.codeLine(pr.commit.sha.slice(0, 7)),
