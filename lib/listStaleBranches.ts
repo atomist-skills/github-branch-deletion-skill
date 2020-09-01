@@ -231,30 +231,6 @@ No commits on the following${
 						}:`,
 					},
 				} as slack.SectionBlock,
-				{
-					type: "context",
-					elements: [
-						{
-							type: "image",
-							image_url:
-								"https://images.atomist.com/logo/atomist-black-mark-xsmall.png",
-							alt_text: "Atomist icon",
-						},
-						{
-							type: "mrkdwn",
-							text: `${ctx.skill.namespace}/${
-								ctx.skill.name
-							} \u00B7 ${slack.url(
-								`https://go.atomist.com/manage/${
-									ctx.workspaceId
-								}/skills/configure/${
-									ctx.skill.id
-								}/${encodeURIComponent(cfg.name)}`,
-								"Configure",
-							)}`,
-						},
-					],
-				} as slack.ContextBlock,
 				{ type: "divider" } as slack.DividerBlock,
 			],
 		};
@@ -363,7 +339,33 @@ ${text}`,
 			);
 		});
 
-		msg.blocks.push({ type: "divider" } as slack.DividerBlock);
+		msg.blocks.push(
+			{ type: "divider" } as slack.DividerBlock,
+			{
+				type: "context",
+				elements: [
+					{
+						type: "image",
+						image_url:
+							"https://images.atomist.com/logo/atomist-black-mark-xsmall.png",
+						alt_text: "Atomist icon",
+					},
+					{
+						type: "mrkdwn",
+						text: `${ctx.skill.namespace}/${
+							ctx.skill.name
+						} \u00B7 ${slack.url(
+							`https://go.atomist.com/manage/${
+								ctx.workspaceId
+							}/skills/configure/${
+								ctx.skill.id
+							}/${encodeURIComponent(cfg.name)}`,
+							"Configure",
+						)}`,
+					},
+				],
+			} as slack.ContextBlock,
+		);
 
 		await ctx.message.send(
 			msg,
