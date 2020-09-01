@@ -230,9 +230,11 @@ export async function listStaleBranchesOnRepo(
 							`${repo.owner}/${repo.name}`,
 						)}
 No commits on the following${
-							branches.length > 1 ? " " + branches.length : ""
+							staleBranches.length > 1
+								? " " + staleBranches.length
+								: ""
 						} ${
-							branches.length === 1 ? "branch" : "branches"
+							staleBranches.length === 1 ? "branch" : "branches"
 						} in last${threshold > 1 ? " " + threshold : ""} ${
 							threshold === 1 ? "day" : "days"
 						}:`,
