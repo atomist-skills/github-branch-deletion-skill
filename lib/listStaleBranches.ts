@@ -122,7 +122,11 @@ export async function listStaleBranchesOnRepo(
 		repository.gitHub({ owner: repo.owner, repo: repo.name, credential }),
 	);
 	const branches = (
-		await api.repos.listBranches({ owner: repo.owner, repo: repo.name })
+		await api.repos.listBranches({
+			owner: repo.owner,
+			repo: repo.name,
+			per_page: 100,
+		})
 	).data
 		.filter(b => !b.protected)
 		.filter(b => b.name !== repo.defaultBranch && b.name !== "gh-pages")
@@ -134,7 +138,9 @@ export async function listStaleBranchesOnRepo(
 		commit: CommitQuery["Commit"][0];
 	}> = [];
 
-	for (const branch of branches) {
+	const branchPages = _.chunk(_.orderBy(branches, ["name"]), 2);
+
+	for (const branch of branchPages[page]) {
 		const commit = await ctx.graphql.query<
 			CommitQuery,
 			CommitQueryVariables
@@ -199,7 +205,7 @@ export async function listStaleBranchesOnRepo(
 		}
 	}
 
-	if (staleBranches.length > 0) {
+	if (branches.length > 0) {
 		let id;
 		if (!msgId) {
 			const prefix = `${ctx.skill.namespace}/${ctx.skill.name}/${repo.owner}/${repo.name}/${cfg.name}`;
@@ -222,11 +228,9 @@ export async function listStaleBranchesOnRepo(
 						type: "mrkdwn",
 						text: `*Stale Branches*
 No commits on the following${
-							staleBranches.length > 1
-								? " " + staleBranches.length
-								: ""
+							branches.length > 1 ? " " + branches.length : ""
 						} ${
-							staleBranches.length === 1 ? "branch" : "branches"
+							branches.length === 1 ? "branch" : "branches"
 						} in last${threshold > 1 ? " " + threshold : ""} ${
 							threshold === 1 ? "day" : "days"
 						}:`,
@@ -236,12 +240,7 @@ No commits on the following${
 			],
 		};
 
-		const staleBranchesPages = _.chunk(
-			_.orderBy(staleBranches, ["branch"]),
-			2,
-		);
-
-		staleBranchesPages[page].forEach(pr => {
+		staleBranches.forEach(pr => {
 			const text = `${slack.url(
 				pr.commit.url,
 				slack.codeLine(pr.commit.sha.slice(0, 7)),
@@ -249,7 +248,7 @@ No commits on the following${
 			let pullRequest;
 			const duration = `${slack.separator()} ${formatDuration(
 				Date.now() - Date.parse(pr.commit.timestamp),
-				"y [years], w [weeks], d [days]",
+				"y [years], m [months], w [weeks], d [days]",
 			)} ago`;
 			if (pr.pullRequest) {
 				pullRequest = `${slack.url(
@@ -373,7 +372,7 @@ ${text}`,
 			} as slack.ContextBlock,
 		);
 
-		if (staleBranchesPages.length > 1) {
+		if (branchPages.length > 1) {
 			const paging = [];
 			if (page > 0) {
 				paging.push(
@@ -399,7 +398,7 @@ ${text}`,
 					),
 				);
 			}
-			if (page < staleBranchesPages.length - 1) {
+			if (page < branchPages.length - 1) {
 				paging.push(
 					slack.block.elementForCommand<slack.ButtonElement>(
 						{
