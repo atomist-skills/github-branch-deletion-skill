@@ -23,8 +23,8 @@ import {
 	repository,
 	secret,
 	slack,
-	status,
 	state,
+	status,
 } from "@atomist/skill";
 import { PromisePool } from "@supercharge/promise-pool/dist/promise-pool";
 import * as _ from "lodash";
@@ -106,6 +106,7 @@ export async function listStaleBranchesOnRepo(
 	},
 	msgId: string,
 	processState?: { previous: string; current: string },
+	page = 0,
 ): Promise<void> {
 	const threshold = cfg.parameters.staleThreshold || 7;
 	const branchFilters = cfg.parameters.staleExcludes || [];
@@ -235,7 +236,12 @@ No commits on the following${
 			],
 		};
 
-		_.orderBy(staleBranches, ["branch"]).forEach(pr => {
+		const staleBranchesPages = _.chunk(
+			_.orderBy(staleBranches, ["branch"]),
+			1,
+		);
+
+		staleBranchesPages[page].forEach(pr => {
 			const text = `${slack.url(
 				pr.commit.url,
 				slack.codeLine(pr.commit.sha.slice(0, 7)),
@@ -366,6 +372,62 @@ ${text}`,
 				],
 			} as slack.ContextBlock,
 		);
+
+		if (staleBranchesPages.length > 1) {
+			const paging = [];
+			if (page > 0) {
+				paging.push(
+					slack.block.elementForCommand<slack.ButtonElement>(
+						{
+							type: "button",
+							text: {
+								type: "plain_text",
+								text: "<",
+							},
+						} as slack.ButtonElement,
+						"pagingAction",
+						{
+							name: repo.name,
+							owner: repo.owner,
+							cfg: cfg.name,
+							apiUrl: repo.apiUrl,
+							defaultBranch: repo.defaultBranch,
+							channels: JSON.stringify(repo.channels),
+							msgId: id,
+							page: page - 1,
+						},
+					),
+				);
+			}
+			if (page < staleBranchesPages.length) {
+				paging.push(
+					slack.block.elementForCommand<slack.ButtonElement>(
+						{
+							type: "button",
+							text: {
+								type: "plain_text",
+								text: ">",
+							},
+						} as slack.ButtonElement,
+						"pagingAction",
+						{
+							name: repo.name,
+							owner: repo.owner,
+							cfg: cfg.name,
+							apiUrl: repo.apiUrl,
+							defaultBranch: repo.defaultBranch,
+							channels: JSON.stringify(repo.channels),
+							msgId: id,
+							page: page + 1,
+						},
+					),
+				);
+			}
+			msg.blocks.push({
+				type: "actions",
+				elements: paging,
+			} as slack.ActionsBlock);
+		}
 
 		await ctx.message.send(
 			msg,
