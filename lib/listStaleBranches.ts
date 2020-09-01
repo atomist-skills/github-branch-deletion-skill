@@ -351,13 +351,14 @@ ${text}`,
 						alt_text: "Atomist icon",
 					},
 					{
+						// https://go.atomist.com/T29E48P34/manage/skills/configure/d40d1a80-fe86-4656-8e97-417f6e7a6814/all%20repos
 						type: "mrkdwn",
 						text: `${ctx.skill.namespace}/${
 							ctx.skill.name
 						} \u00B7 ${slack.url(
-							`https://go.atomist.com/manage/${
+							`https://go.atomist.com/${
 								ctx.workspaceId
-							}/skills/configure/${
+							}/manage/skills/configure/${
 								ctx.skill.id
 							}/${encodeURIComponent(cfg.name)}`,
 							"Configure",
