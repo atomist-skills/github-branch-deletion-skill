@@ -244,6 +244,10 @@ No commits on the following${
 			],
 		};
 
+		if (page > branchPages.length - 1) {
+			page = 0;
+		}
+
 		branchPages[page].forEach(pr => {
 			const text = `${slack.url(
 				pr.commit.url,
