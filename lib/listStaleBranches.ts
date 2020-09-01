@@ -140,7 +140,7 @@ export async function listStaleBranchesOnRepo(
 
 	const branchPages = _.chunk(_.orderBy(branches, ["name"]), 2);
 
-	for (const branch of branchPages[page]) {
+	for (const branch of branchPages[page] || []) {
 		const commit = await ctx.graphql.query<
 			CommitQuery,
 			CommitQueryVariables

@@ -21,6 +21,7 @@ import {
 	github,
 	repository,
 	secret,
+	slack,
 } from "@atomist/skill";
 import * as _ from "lodash";
 import { DeleteBranchConfiguration } from "../configuration";
@@ -144,27 +145,32 @@ async function deleteBranch(
 	cfg: Configuration<DeleteBranchConfiguration>,
 	ctx: CommandContext,
 ): Promise<void> {
-	const credential = await ctx.credential.resolve(
-		secret.gitHubAppToken({
-			owner: params.owner,
-			repo: params.name,
-		}),
-	);
-	const api = github.api(
-		repository.gitHub({
-			owner: params.owner,
-			repo: params.name,
-			credential,
-		}),
-	);
+	const credential = await ctx.credential.resolve(secret.gitHubUserToken());
+	if (credential) {
+		const api = github.api(
+			repository.gitHub({
+				owner: params.owner,
+				repo: params.name,
+				credential,
+			}),
+		);
 
-	try {
-		await api.git.deleteRef({
-			owner: params.owner,
-			repo: params.name,
-			ref: `heads/${params.branch}`,
-		});
-	} catch (e) {
-		// ignore
+		try {
+			await api.git.deleteRef({
+				owner: params.owner,
+				repo: params.name,
+				ref: `heads/${params.branch}`,
+			});
+		} catch (e) {
+			// ignore
+		}
+	} else {
+		await ctx.message.respond(
+			slack.errorMessage(
+				"GitHub Authorization",
+				"No GitHub authorization found. Please run `@atomist authorize github`",
+				ctx,
+			),
+		);
 	}
 }
