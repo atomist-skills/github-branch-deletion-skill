@@ -238,7 +238,7 @@ No commits on the following${
 
 		const staleBranchesPages = _.chunk(
 			_.orderBy(staleBranches, ["branch"]),
-			1,
+			2,
 		);
 
 		staleBranchesPages[page].forEach(pr => {
