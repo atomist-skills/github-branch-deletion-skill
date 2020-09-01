@@ -84,6 +84,10 @@ async function ignoreBranch(
 	cfg: Configuration<DeleteBranchConfiguration>,
 	ctx: CommandContext,
 ): Promise<void> {
+	const staleExcludes = _.uniq([
+		...(cfg.parameters.staleExcludes || []),
+		`${params.owner}\\/${params.name}#${params.branch}`,
+	]);
 	await ctx.graphql.mutate<
 		SaveSkillConfigurationMutation,
 		SaveSkillConfigurationMutationVariables
@@ -116,10 +120,7 @@ async function ignoreBranch(
 				{
 					stringArray: {
 						name: "staleExcludes",
-						value: [
-							...(cfg.parameters.staleExcludes || []),
-							`${params.owner}\\/${params.name}#${params.branch}`,
-						],
+						value: staleExcludes,
 					},
 				},
 				{
@@ -135,6 +136,7 @@ async function ignoreBranch(
 			})),
 		},
 	});
+	cfg.parameters.staleExcludes = staleExcludes;
 }
 
 async function deleteBranch(
