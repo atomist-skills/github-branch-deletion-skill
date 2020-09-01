@@ -325,13 +325,9 @@ ${text}`,
 						slack.StaticOptionElement
 					>(
 						{
-							type: "static_select",
-							placeholder: {
-								type: "plain_text",
-								text: "Actions",
-							},
+							type: "overflow",
 							options,
-						} as slack.StaticOptionElement,
+						} as slack.OverflowElement,
 						"branchAction",
 						{
 							name: repo.name,
