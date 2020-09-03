@@ -70,6 +70,9 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 		case "delete":
 			await deleteBranch(params, cfg, ctx);
 			break;
+		case "raise_pr":
+			await raisePr(params, cfg, ctx);
+			break;
 	}
 
 	return listStaleBranchesOnRepo(
@@ -160,6 +163,47 @@ async function deleteBranch(
 				owner: params.owner,
 				repo: params.name,
 				ref: `heads/${params.branch}`,
+			});
+		} catch (e) {
+			// ignore
+		}
+	} else {
+		await ctx.message.respond(
+			slack.errorMessage(
+				"GitHub Authorization",
+				"No GitHub authorization found. Please run `@atomist authorize github`",
+				ctx,
+			),
+		);
+	}
+}
+
+async function raisePr(
+	params: BranchAction,
+	cfg: Configuration<DeleteBranchConfiguration>,
+	ctx: CommandContext,
+): Promise<void> {
+	const prParams = await ctx.parameters.prompt<{ title: string }>({
+		title: {},
+	});
+
+	const credential = await ctx.credential.resolve(secret.gitHubUserToken());
+	if (credential) {
+		const api = github.api(
+			repository.gitHub({
+				owner: params.owner,
+				repo: params.name,
+				credential,
+			}),
+		);
+
+		try {
+			await api.pulls.create({
+				owner: params.owner,
+				repo: params.name,
+				head: params.branch,
+				base: params.defaultBranch || "master",
+				title: prParams.title,
 			});
 		} catch (e) {
 			// ignore

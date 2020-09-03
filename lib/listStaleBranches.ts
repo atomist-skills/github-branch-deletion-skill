@@ -276,15 +276,13 @@ No commits on the following${
 					: "https://images.atomist.com/rug/pull-request-closed.png"
 				: "https://images.atomist.com/rug/branch-open.png";
 			const options = [];
-			if (!pr.pullRequest || pr.pullRequest.state !== "open") {
-				options.push({
-					text: {
-						type: "plain_text",
-						text: "Delete",
-					},
-					value: "delete",
-				});
-			}
+			options.push({
+				text: {
+					type: "plain_text",
+					text: "Delete",
+				},
+				value: "delete",
+			});
 			options.push({
 				text: {
 					type: "plain_text",
@@ -325,6 +323,7 @@ ${text}`,
 							cfg: cfg.name,
 							apiUrl: repo.apiUrl,
 							defaultBranch: repo.defaultBranch,
+							title: pr.commit?.message,
 							channels: JSON.stringify(repo.channels),
 							msgId: id,
 						},
