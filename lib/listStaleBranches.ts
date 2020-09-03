@@ -66,11 +66,10 @@ export async function listStateBranches(
 		),
 	);
 
-	const processState = await state.hydrate<{ previous: string }>(
-		cfg.name,
-		ctx,
-		{ previous: undefined },
-	);
+	const processState = await state.hydrate<{
+		previous: string;
+		repos: Record<string, string[]>;
+	}>(cfg.name, ctx, { previous: undefined, repos: {} });
 	const current = guid();
 
 	await PromisePool.for(filteredRepos)
@@ -87,10 +86,18 @@ export async function listStateBranches(
 					apiUrl: r.org.provider.apiUrl,
 				},
 				undefined,
-				{ previous: processState.previous, current },
+				{
+					previous: processState.previous,
+					current,
+					repos: processState.repos,
+				},
 			),
 		);
-	await state.save({ previous: current }, cfg.name, ctx);
+	await state.save(
+		{ previous: current, repos: processState.repos },
+		cfg.name,
+		ctx,
+	);
 	return status.success(`Processed stale branches`);
 }
 
@@ -105,7 +112,11 @@ export async function listStaleBranchesOnRepo(
 		channels: string[];
 	},
 	msgId: string,
-	processState?: { previous: string; current: string },
+	processState?: {
+		previous: string;
+		current: string;
+		repos: Record<string, string[]>;
+	},
 	page = 0,
 ): Promise<void> {
 	const threshold = cfg.parameters.staleThreshold || 7;
@@ -201,6 +212,16 @@ export async function listStaleBranchesOnRepo(
 				});
 			}
 		}
+	}
+
+	if (!msgId) {
+		const slug = `${repo.owner}/${repo.name}`;
+		const newBranches = staleBranches.map(b => b.branch).sort();
+		const oldBranches = processState.repos[slug] || [];
+		if (newBranches === oldBranches) {
+			return;
+		}
+		processState.repos[slug] = newBranches;
 	}
 
 	const branchPages = _.chunk(_.orderBy(staleBranches, ["name"]), 2);
