@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.7...HEAD)
+## [Unreleased](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.8...HEAD)
+
+## [2.0.8](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.7...2.0.8) - 2020-09-03
 
 ### Added
 
