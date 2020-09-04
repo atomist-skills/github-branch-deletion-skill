@@ -89,7 +89,7 @@ export async function listStateBranches(
 				{
 					previous: processState.previous,
 					current,
-					repos: processState.repos,
+					repos: processState.repos || {},
 				},
 			),
 		);
@@ -218,7 +218,7 @@ export async function listStaleBranchesOnRepo(
 		const slug = `${repo.owner}/${repo.name}`;
 		const newBranches = staleBranches.map(b => b.branch).sort();
 		const oldBranches = processState.repos[slug] || [];
-		if (newBranches === oldBranches) {
+		if (_.isEqual(newBranches, oldBranches)) {
 			return;
 		}
 		processState.repos[slug] = newBranches;
