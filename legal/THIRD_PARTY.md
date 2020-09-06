@@ -16,7 +16,7 @@ This page details all runtime dependencies of `@atomist/github-branch-deletion-s
 | [GPL-3.0](#gpl-30)            | 1     |
 | [ISC](#isc)                   | 32    |
 | [MIT AND Zlib](#mit-and-zlib) | 1     |
-| [MIT](#mit)                   | 210   |
+| [MIT](#mit)                   | 211   |
 
 #### Apache-2.0
 
@@ -25,7 +25,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 | Name                                  | Version                       | Publisher             | Repository                                                                                                                       |
 | ------------------------------------- | ----------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `@atomist/skill-logging`              | `0.1.1-9`                     | Atomist               | [https://github.com/atomist-skills/skill-logging](https://github.com/atomist-skills/skill-logging)                               |
-| `@atomist/skill`                      | `0.1.1-92`                    | Atomist               | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
+| `@atomist/skill`                      | `0.1.1-101`                   | Atomist               | [https://github.com/atomist-skills/skill](https://github.com/atomist-skills/skill)                                               |
 | `@atomist/slack-messages`             | `1.2.0-master.20200806132057` | Atomist               | [https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)                                           |
 | `@google-cloud/common`                | `2.4.0`                       | Google Inc.           | [https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)                                       |
 | `@google-cloud/common`                | `3.3.3`                       | Google Inc.           | [https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)                                       |
@@ -243,7 +243,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `debug`                                 | `4.1.1`    | TJ Holowaychuk      | [https://github.com/visionmedia/debug](https://github.com/visionmedia/debug)                                                                   |
 | `decamelize`                            | `1.2.0`    | Sindre Sorhus       | [https://github.com/sindresorhus/decamelize](https://github.com/sindresorhus/decamelize)                                                       |
 | `delayed-stream`                        | `1.0.0`    | Felix Geisendörfer  | [https://github.com/felixge/node-delayed-stream](https://github.com/felixge/node-delayed-stream)                                               |
-| `dot-prop`                              | `5.2.0`    | Sindre Sorhus       | [https://github.com/sindresorhus/dot-prop](https://github.com/sindresorhus/dot-prop)                                                           |
+| `dot-prop`                              | `5.3.0`    | Sindre Sorhus       | [https://github.com/sindresorhus/dot-prop](https://github.com/sindresorhus/dot-prop)                                                           |
 | `duplexify`                             | `3.7.1`    | Mathias Buus        | [https://github.com/mafintosh/duplexify](https://github.com/mafintosh/duplexify)                                                               |
 | `duplexify`                             | `4.1.1`    | Mathias Buus        | [https://github.com/mafintosh/duplexify](https://github.com/mafintosh/duplexify)                                                               |
 | `ee-first`                              | `1.1.1`    | Jonathan Ong        | [https://github.com/jonathanong/ee-first](https://github.com/jonathanong/ee-first)                                                             |
@@ -320,6 +320,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `moment`                                | `2.27.0`   | Iskren Ivov Chernev | [https://github.com/moment/moment](https://github.com/moment/moment)                                                                           |
 | `ms`                                    | `2.1.2`    |                     | [https://github.com/zeit/ms](https://github.com/zeit/ms)                                                                                       |
 | `node-fetch`                            | `2.6.0`    | David Frank         | [https://github.com/bitinn/node-fetch](https://github.com/bitinn/node-fetch)                                                                   |
+| `node-fetch`                            | `2.6.1`    | David Frank         | [https://github.com/bitinn/node-fetch](https://github.com/bitinn/node-fetch)                                                                   |
 | `normalize-url`                         | `3.3.0`    | Sindre Sorhus       | [https://github.com/sindresorhus/normalize-url](https://github.com/sindresorhus/normalize-url)                                                 |
 | `on-finished`                           | `2.3.0`    |                     | [https://github.com/jshttp/on-finished](https://github.com/jshttp/on-finished)                                                                 |
 | `onetime`                               | `5.1.0`    | Sindre Sorhus       | [https://github.com/sindresorhus/onetime](https://github.com/sindresorhus/onetime)                                                             |
