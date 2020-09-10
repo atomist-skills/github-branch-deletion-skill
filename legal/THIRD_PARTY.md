@@ -16,7 +16,7 @@ This page details all runtime dependencies of `@atomist/github-branch-deletion-s
 | [GPL-3.0](#gpl-30)            | 1     |
 | [ISC](#isc)                   | 32    |
 | [MIT AND Zlib](#mit-and-zlib) | 1     |
-| [MIT](#mit)                   | 211   |
+| [MIT](#mit)                   | 210   |
 
 #### Apache-2.0
 
@@ -319,7 +319,6 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `moment-duration-format`                | `2.3.2`    |                     | [https://github.com/jsmreese/moment-duration-format](https://github.com/jsmreese/moment-duration-format)                                       |
 | `moment`                                | `2.27.0`   | Iskren Ivov Chernev | [https://github.com/moment/moment](https://github.com/moment/moment)                                                                           |
 | `ms`                                    | `2.1.2`    |                     | [https://github.com/zeit/ms](https://github.com/zeit/ms)                                                                                       |
-| `node-fetch`                            | `2.6.0`    | David Frank         | [https://github.com/bitinn/node-fetch](https://github.com/bitinn/node-fetch)                                                                   |
 | `node-fetch`                            | `2.6.1`    | David Frank         | [https://github.com/bitinn/node-fetch](https://github.com/bitinn/node-fetch)                                                                   |
 | `normalize-url`                         | `3.3.0`    | Sindre Sorhus       | [https://github.com/sindresorhus/normalize-url](https://github.com/sindresorhus/normalize-url)                                                 |
 | `on-finished`                           | `2.3.0`    |                     | [https://github.com/jshttp/on-finished](https://github.com/jshttp/on-finished)                                                                 |
