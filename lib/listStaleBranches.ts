@@ -72,6 +72,10 @@ export async function listStateBranches(
 	}>(cfg.name, ctx, { previous: undefined, repos: {} });
 	const current = guid();
 
+	const repoBranches = {
+		...processState.repos,
+	};
+
 	await PromisePool.for(filteredRepos)
 		.withConcurrency(5)
 		.process(r =>
@@ -89,15 +93,11 @@ export async function listStateBranches(
 				{
 					previous: processState.previous,
 					current,
-					repos: processState.repos || {},
+					repos: repoBranches,
 				},
 			),
 		);
-	await state.save(
-		{ previous: current, repos: processState.repos },
-		cfg.name,
-		ctx,
-	);
+	await state.save({ previous: current, repos: repoBranches }, cfg.name, ctx);
 	return status.success(`Processed stale branches`);
 }
 
@@ -147,6 +147,7 @@ export async function listStaleBranchesOnRepo(
 		branch: string;
 		pullRequest?: PullRequestQuery["PullRequest"][0];
 		commit: CommitQuery["Commit"][0];
+		newStale: boolean;
 	}> = [];
 
 	for (const branch of branches) {
@@ -170,11 +171,13 @@ export async function listStaleBranchesOnRepo(
 						branch: branch.name,
 						pullRequest: pr.PullRequest[0],
 						commit: commit.Commit[0],
+						newStale: false,
 					});
 				} else {
 					staleBranches.push({
 						branch: branch.name,
 						commit: commit.Commit[0],
+						newStale: false,
 					});
 				}
 			}
@@ -193,6 +196,7 @@ export async function listStaleBranchesOnRepo(
 			if (commitDate < thresholdDate) {
 				staleBranches.push({
 					branch: branch.name,
+					newStale: false,
 					commit: {
 						message: branchData.commit.commit.message,
 						sha: branchData.commit.sha,
@@ -222,6 +226,9 @@ export async function listStaleBranchesOnRepo(
 			return;
 		}
 		processState.repos[slug] = newBranches;
+		staleBranches
+			.filter(b => !oldBranches.includes(b.branch))
+			.forEach(b => (b.newStale = true));
 	}
 
 	const branchPages = _.chunk(_.orderBy(staleBranches, ["name"]), 2);
@@ -326,7 +333,11 @@ No commits on the following${
 					type: "section",
 					text: {
 						type: "mrkdwn",
-						text: `${slack.bold(pr.branch)}
+						text: `${slack.bold(pr.branch)}${
+							pr.newStale
+								? ` ${slack.separator()} ${slack.italic("new")}`
+								: ""
+						}
 ${text}`,
 					},
 					accessory: slack.block.elementForCommand<
