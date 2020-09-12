@@ -73,8 +73,12 @@ export async function listStateBranches(
 		repositories: Record<string, RepositoryBranchState>;
 	}>(cfg.name, ctx, { repositories: {} });
 
+	if (!repositoryState.repositories) {
+		repositoryState.repositories = {};
+	}
+
 	for (const repo of filteredRepos) {
-		const slug = `${repo.owner}/${repo.name}}`;
+		const slug = `${repo.owner}/${repo.name}`;
 		repositoryState.repositories[slug] = await listStaleBranchesOnRepo(
 			cfg,
 			ctx,
@@ -86,7 +90,10 @@ export async function listStateBranches(
 				apiUrl: repo.org.provider.apiUrl,
 			},
 			undefined,
-			repositoryState.repositories[slug] || { staleBranches: [], id: 0 },
+			repositoryState?.repositories?.[slug] || {
+				staleBranches: [],
+				id: 0,
+			},
 		);
 	}
 
