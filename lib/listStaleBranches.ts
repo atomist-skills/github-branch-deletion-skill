@@ -97,7 +97,7 @@ export async function listStateBranches(
 		);
 	}
 
-	await state.save({ repositories: repositoryState }, cfg.name, ctx);
+	await state.save(repositoryState, cfg.name, ctx);
 	return status.success(`Processed stale branches`);
 }
 
