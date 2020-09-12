@@ -18,7 +18,6 @@ import {
 	Contextual,
 	EventContext,
 	github,
-	guid,
 	HandlerStatus,
 	repository,
 	secret,
@@ -26,7 +25,6 @@ import {
 	state,
 	status,
 } from "@atomist/skill";
-import { PromisePool } from "@supercharge/promise-pool/dist/promise-pool";
 import * as _ from "lodash";
 import { DeleteBranchConfiguration } from "./configuration";
 import {
@@ -39,6 +37,11 @@ import {
 	RepositoriesQueryVariables,
 } from "./typings/types";
 import { formatDuration, truncateCommitMessage } from "./util";
+
+export interface RepositoryBranchState {
+	staleBranches: string[];
+	id: number;
+}
 
 export async function listStateBranches(
 	cfg: { name: string; parameters: DeleteBranchConfiguration },
@@ -66,38 +69,28 @@ export async function listStateBranches(
 		),
 	);
 
-	const processState = await state.hydrate<{
-		previous: string;
-		repos: Record<string, string[]>;
-	}>(cfg.name, ctx, { previous: undefined, repos: {} });
-	const current = guid();
+	const repositoryState = await state.hydrate<{
+		repositories: Record<string, RepositoryBranchState>;
+	}>(cfg.name, ctx, { repositories: {} });
 
-	const repoBranches = {
-		...processState.repos,
-	};
-
-	await PromisePool.for(filteredRepos)
-		.withConcurrency(5)
-		.process(r =>
-			listStaleBranchesOnRepo(
-				cfg,
-				ctx,
-				{
-					owner: r.owner,
-					name: r.name,
-					defaultBranch: r.defaultBranch,
-					channels: r.channels.map(c => c.name),
-					apiUrl: r.org.provider.apiUrl,
-				},
-				undefined,
-				{
-					previous: processState.previous,
-					current,
-					repos: repoBranches,
-				},
-			),
+	for (const repo of filteredRepos) {
+		const slug = `${repo.owner}/${repo.name}}`;
+		repositoryState.repositories[slug] = await listStaleBranchesOnRepo(
+			cfg,
+			ctx,
+			{
+				owner: repo.owner,
+				name: repo.name,
+				defaultBranch: repo.defaultBranch,
+				channels: repo.channels.map(c => c.name),
+				apiUrl: repo.org.provider.apiUrl,
+			},
+			undefined,
+			repositoryState.repositories[slug] || { staleBranches: [], id: 0 },
 		);
-	await state.save({ previous: current, repos: repoBranches }, cfg.name, ctx);
+	}
+
+	await state.save({ repositories: repositoryState }, cfg.name, ctx);
 	return status.success(`Processed stale branches`);
 }
 
@@ -112,13 +105,9 @@ export async function listStaleBranchesOnRepo(
 		channels: string[];
 	},
 	msgId: string,
-	processState?: {
-		previous: string;
-		current: string;
-		repos: Record<string, string[]>;
-	},
+	repositoryState: RepositoryBranchState,
 	page = 0,
-): Promise<void> {
+): Promise<RepositoryBranchState> {
 	const threshold = cfg.parameters.staleThreshold || 7;
 	const branchFilters = cfg.parameters.staleExcludes || [];
 	const thresholdDate = Date.now() - 1000 * 60 * 60 * 24 * threshold;
@@ -158,6 +147,7 @@ export async function listStaleBranchesOnRepo(
 		if (commit.Commit?.[0]?.timestamp) {
 			const commitDate = Date.parse(commit.Commit[0].timestamp);
 			if (commitDate < thresholdDate) {
+				const newStale = threshold - commitDate < 1000 * 60 * 60 * 24;
 				const pr = await ctx.graphql.query<
 					PullRequestQuery,
 					PullRequestQueryVariables
@@ -171,13 +161,13 @@ export async function listStaleBranchesOnRepo(
 						branch: branch.name,
 						pullRequest: pr.PullRequest[0],
 						commit: commit.Commit[0],
-						newStale: false,
+						newStale,
 					});
 				} else {
 					staleBranches.push({
 						branch: branch.name,
 						commit: commit.Commit[0],
-						newStale: false,
+						newStale,
 					});
 				}
 			}
@@ -196,7 +186,7 @@ export async function listStaleBranchesOnRepo(
 			if (commitDate < thresholdDate) {
 				staleBranches.push({
 					branch: branch.name,
-					newStale: false,
+					newStale: threshold - commitDate < 1000 * 60 * 60 * 24,
 					commit: {
 						message: branchData.commit.commit.message,
 						sha: branchData.commit.sha,
@@ -219,16 +209,11 @@ export async function listStaleBranchesOnRepo(
 	}
 
 	if (!msgId) {
-		const slug = `${repo.owner}/${repo.name}`;
 		const newBranches = staleBranches.map(b => b.branch).sort();
-		const oldBranches = processState.repos[slug] || [];
-		if (_.isEqual(newBranches, oldBranches)) {
-			return;
+		if (_.isEqual(newBranches, repositoryState.staleBranches)) {
+			return repositoryState;
 		}
-		processState.repos[slug] = newBranches;
-		staleBranches
-			.filter(b => !oldBranches.includes(b.branch))
-			.forEach(b => (b.newStale = true));
+		repositoryState.staleBranches = newBranches;
 	}
 
 	const branchPages = _.chunk(_.orderBy(staleBranches, ["name"]), 2);
@@ -237,13 +222,12 @@ export async function listStaleBranchesOnRepo(
 		let id;
 		if (!msgId) {
 			const prefix = `${ctx.skill.namespace}/${ctx.skill.name}/${repo.owner}/${repo.name}/${cfg.name}`;
-			if (processState.previous) {
-				await ctx.message.delete(
-					{ channels: repo.channels },
-					{ id: `${prefix}/${processState.previous}` },
-				);
-			}
-			id = `${prefix}/${processState.current}`;
+			await ctx.message.delete(
+				{ channels: repo.channels },
+				{ id: `${prefix}/${repositoryState.id}` },
+			);
+			repositoryState.id = repositoryState.id + 1;
+			id = `${prefix}/${repositoryState.id}`;
 		} else {
 			id = msgId;
 		}
@@ -477,6 +461,8 @@ ${text}`,
 	} else if (msgId) {
 		await ctx.message.delete({ channels: repo.channels }, { id: msgId });
 	}
+
+	return repositoryState;
 }
 
 function excludeBranch(

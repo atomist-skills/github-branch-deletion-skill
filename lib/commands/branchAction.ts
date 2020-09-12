@@ -22,10 +22,15 @@ import {
 	repository,
 	secret,
 	slack,
+	state,
+	status,
 } from "@atomist/skill";
 import * as _ from "lodash";
 import { DeleteBranchConfiguration } from "../configuration";
-import { listStaleBranchesOnRepo } from "../listStaleBranches";
+import {
+	listStaleBranchesOnRepo,
+	RepositoryBranchState,
+} from "../listStaleBranches";
 import {
 	SaveSkillConfigurationMutation,
 	SaveSkillConfigurationMutationVariables,
@@ -63,24 +68,38 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 		};
 	}
 
+	let msg;
 	switch (params.action) {
 		case "ignore":
 			await ignoreBranch(params, cfg, ctx);
+			msg = `Added branch _${params.branch}_ to ignore list`;
 			break;
 		case "delete":
 			await deleteBranch(params, cfg, ctx);
+			msg = `Deleted branch _${params.branch}_`;
 			break;
 		case "raise_pr":
 			await raisePr(params, cfg, ctx);
+			msg = `Raised PR for branch _${params.branch}_`;
 			break;
 	}
 
-	return listStaleBranchesOnRepo(
+	const repositoryState = await state.hydrate<{
+		repositories: Record<string, RepositoryBranchState>;
+	}>(cfg.name, ctx, { repositories: {} });
+
+	await listStaleBranchesOnRepo(
 		cfg,
 		ctx,
 		{ ...params, channels: JSON.parse(params.channels) },
 		params.msgId,
+		repositoryState.repositories[`${params.owner}/${params.name}`] || {
+			staleBranches: [],
+			id: 0,
+		},
 	);
+
+	return status.success(msg);
 };
 
 async function ignoreBranch(

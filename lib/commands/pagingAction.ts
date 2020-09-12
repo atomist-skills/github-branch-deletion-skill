@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-import { CommandHandler } from "@atomist/skill";
+import { CommandHandler, state, status } from "@atomist/skill";
 import { DeleteBranchConfiguration } from "../configuration";
-import { listStaleBranchesOnRepo } from "../listStaleBranches";
+import {
+	listStaleBranchesOnRepo,
+	RepositoryBranchState,
+} from "../listStaleBranches";
 
 interface PagingAction {
 	owner: string;
@@ -48,12 +51,21 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 		};
 	}
 
-	return listStaleBranchesOnRepo(
+	const repositoryState = await state.hydrate<{
+		repositories: Record<string, RepositoryBranchState>;
+	}>(cfg.name, ctx, { repositories: {} });
+
+	await listStaleBranchesOnRepo(
 		cfg,
 		ctx,
 		{ ...params, channels: JSON.parse(params.channels) },
 		params.msgId,
-		undefined,
+		repositoryState.repositories[`${params.owner}/${params.name}`] || {
+			staleBranches: [],
+			id: 0,
+		},
 		+params.page,
 	);
+
+	return status.success(`Paged stale branch listing`);
 };
