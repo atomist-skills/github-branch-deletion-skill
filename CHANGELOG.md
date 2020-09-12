@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.8...HEAD)
 
+### Added
+
+-   Add new stale branch indicator. [7b57f47](https://github.com/atomist-skills/github-branch-deletion-skill/commit/7b57f47095cd9ca4425440b8d40d2dacf34644f9)
+
 ## [2.0.8](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.7...2.0.8) - 2020-09-03
 
 ### Added
