@@ -154,7 +154,8 @@ export async function listStaleBranchesOnRepo(
 		if (commit.Commit?.[0]?.timestamp) {
 			const commitDate = Date.parse(commit.Commit[0].timestamp);
 			if (commitDate < thresholdDate) {
-				const newStale = threshold - commitDate < 1000 * 60 * 60 * 24;
+				const newStale =
+					thresholdDate - commitDate < 1000 * 60 * 60 * 24;
 				const pr = await ctx.graphql.query<
 					PullRequestQuery,
 					PullRequestQueryVariables
@@ -193,7 +194,7 @@ export async function listStaleBranchesOnRepo(
 			if (commitDate < thresholdDate) {
 				staleBranches.push({
 					branch: branch.name,
-					newStale: threshold - commitDate < 1000 * 60 * 60 * 24,
+					newStale: thresholdDate - commitDate < 1000 * 60 * 60 * 24,
 					commit: {
 						message: branchData.commit.commit.message,
 						sha: branchData.commit.sha,
@@ -326,7 +327,9 @@ No commits on the following${
 						type: "mrkdwn",
 						text: `${slack.bold(pr.branch)}${
 							pr.newStale
-								? ` ${slack.separator()} ${slack.italic("new")}`
+								? ` ${slack.separator()} ${slack.italic(
+										"became stale",
+								  )}`
 								: ""
 						}
 ${text}`,
