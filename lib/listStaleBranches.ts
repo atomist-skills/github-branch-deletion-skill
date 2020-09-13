@@ -98,7 +98,11 @@ export async function listStateBranches(
 	}
 
 	await state.save(repositoryState, cfg.name, ctx);
-	return status.success(`Processed stale branches`);
+	return status.success(
+		`Processed stale branches on ${filteredRepos.length} ${
+			filteredRepos.length === 1 ? "repository" : "repositories"
+		}`,
+	);
 }
 
 export async function listStaleBranchesOnRepo(
@@ -115,6 +119,9 @@ export async function listStaleBranchesOnRepo(
 	repositoryState: RepositoryBranchState,
 	page = 0,
 ): Promise<RepositoryBranchState> {
+	const slug = `${repo.owner}/${repo.name}`;
+	await ctx.audit.log(`Processing stale branches for ${slug}`);
+
 	const threshold = cfg.parameters.staleThreshold || 7;
 	const branchFilters = cfg.parameters.staleExcludes || [];
 	const thresholdDate = Date.now() - 1000 * 60 * 60 * 24 * threshold;
@@ -219,6 +226,7 @@ export async function listStaleBranchesOnRepo(
 	if (!msgId) {
 		const newBranches = staleBranches.map(b => b.branch).sort();
 		if (_.isEqual(newBranches, repositoryState.staleBranches)) {
+			await ctx.audit.log(`No new stale branches found`);
 			return repositoryState;
 		}
 		repositoryState.staleBranches = newBranches;
@@ -227,6 +235,11 @@ export async function listStaleBranchesOnRepo(
 	const branchPages = _.chunk(_.orderBy(staleBranches, ["name"]), 2);
 
 	if (staleBranches.length > 0) {
+		await ctx.audit.log(
+			`Found following stale branches: ${staleBranches
+				.map(b => b.branch)
+				.join(", ")}`,
+		);
 		let id;
 		if (!msgId) {
 			const prefix = `${ctx.skill.namespace}/${ctx.skill.name}/${repo.owner}/${repo.name}/${cfg.name}`;
