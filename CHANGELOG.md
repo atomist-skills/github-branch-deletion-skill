@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.10...HEAD)
 
+### Added
+
+-   Add audit log for schedule. [67b7cde](https://github.com/atomist-skills/github-branch-deletion-skill/commit/67b7cde1493eb96c31e254eabde22512b06a243c)
+
 ## [2.0.10](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.9...2.0.10) - 2020-09-13
 
 ### Fixed
