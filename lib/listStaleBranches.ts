@@ -163,7 +163,7 @@ export async function listStaleBranchesOnRepo(
 			if (commitDate < thresholdDate) {
 				const newStale =
 					thresholdDate - commitDate < 1000 * 60 * 60 * 24;
-				const pr = await ctx.graphql.query<
+				const prs = await ctx.graphql.query<
 					PullRequestQuery,
 					PullRequestQueryVariables
 				>("pullRequest.graphql", {
@@ -171,10 +171,11 @@ export async function listStaleBranchesOnRepo(
 					owner: repo.owner,
 					repo: repo.name,
 				});
-				if (pr.PullRequest?.[0]) {
+				if (prs.PullRequest?.[0]) {
+					const pr = _.orderBy(prs.PullRequest, "number", "desc")[0];
 					staleBranches.push({
 						branch: branch.name,
-						pullRequest: pr.PullRequest[0],
+						pullRequest: pr,
 						commit: commit.Commit[0],
 						newStale,
 					});

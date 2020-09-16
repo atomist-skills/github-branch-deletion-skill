@@ -9,5 +9,9 @@ query pullRequest($repo: String!, $owner: String!, $branch: String) {
       name
       owner
     }
+    branch {
+      name
+    }
+    baseBranchName
   }
 }
