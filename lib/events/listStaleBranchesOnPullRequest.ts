@@ -28,19 +28,18 @@ export const handler: EventHandler<
 > = async ctx => {
 	const cfg = ctx.configuration?.[0];
 	const pr = ctx.data.PullRequest[0];
+	const slug = `${pr.repo.owner}/${pr.repo.name}`;
 
 	const repositoryStates = await state.hydrate<{
 		repositories: Record<string, RepositoryBranchState>;
 	}>(cfg.name, ctx, { repositories: {} });
 
-	const repositoryState = repositoryStates.repositories[
-		`${pr.repo.owner}/${pr.repo.name}`
-	] || {
+	const repositoryState = repositoryStates.repositories[slug] || {
 		staleBranches: [],
 		id: 0,
 	};
 
-	const newRepositoryState = await listStaleBranchesOnRepo(
+	repositoryStates.repositories[slug] = await listStaleBranchesOnRepo(
 		cfg,
 		ctx,
 		{
@@ -53,7 +52,8 @@ export const handler: EventHandler<
 		undefined,
 		repositoryState,
 	);
-	await state.save(newRepositoryState, cfg.name, ctx);
+
+	await state.save(repositoryStates, cfg.name, ctx);
 
 	return status.success(
 		`Processed stale branches on ${pr.repo.owner}/${pr.repo.name}`,
