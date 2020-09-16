@@ -1,0 +1,17 @@
+subscription listStaleBranchesOnDeletedBranch {
+  DeletedBranch {
+    repo {
+      owner
+      name
+      org {
+        provider {
+          apiUrl
+        }
+      }
+      defaultBranch
+      channels {
+        name
+      }
+    }
+  }
+}

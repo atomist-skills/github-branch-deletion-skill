@@ -1,0 +1,21 @@
+subscription listStaleBranchesOnPullRequest {
+  PullRequest(actions: [closed]) {
+    url
+    merged
+    number
+    branchName
+    repo {
+      owner
+      name
+      org {
+        provider {
+          apiUrl
+        }
+      }
+      channels {
+        name
+      }
+      defaultBranch
+    }
+  }
+}
