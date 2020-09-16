@@ -174,6 +174,7 @@ export async function listStaleBranchesOnRepo(
 					repo: repo.name,
 				});
 				if (prs.PullRequest?.[0]) {
+					// Get latest PR from all possible PRs against same branch name
 					const pr = _.orderBy(prs.PullRequest, "number", "desc")[0];
 					staleBranches.push({
 						branch: branch.name,
