@@ -62,6 +62,7 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 		params.msgId,
 		repositoryState.repositories[`${params.owner}/${params.name}`] || {
 			staleBranches: [],
+			pullRequests: {},
 			id: 0,
 		},
 		+params.page,

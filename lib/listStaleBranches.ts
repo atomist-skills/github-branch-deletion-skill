@@ -40,6 +40,7 @@ import { formatDuration, truncateCommitMessage } from "./util";
 
 export interface RepositoryBranchState {
 	staleBranches: string[];
+	pullRequests: Record<number, string>;
 	id: number;
 }
 
@@ -92,6 +93,7 @@ export async function listStateBranches(
 			undefined,
 			repositoryState?.repositories?.[slug] || {
 				staleBranches: [],
+				pullRequests: {},
 				id: 0,
 			},
 		);
@@ -226,11 +228,23 @@ export async function listStaleBranchesOnRepo(
 
 	if (!msgId) {
 		const newBranches = staleBranches.map(b => b.branch).sort();
-		if (_.isEqual(newBranches, repositoryState.staleBranches)) {
+		const newPullRequests = {};
+		staleBranches
+			.filter(b => b.pullRequest)
+			.forEach(
+				b =>
+					(newPullRequests[b.pullRequest.number] =
+						b.pullRequest.state),
+			);
+		if (
+			_.isEqual(newBranches, repositoryState.staleBranches || []) &&
+			_.isEqual(newPullRequests, repositoryState.pullRequests || {})
+		) {
 			await ctx.audit.log(`No new stale branches found`);
 			return repositoryState;
 		}
 		repositoryState.staleBranches = newBranches;
+		repositoryState.pullRequests = newPullRequests;
 	}
 
 	const branchPages = _.chunk(_.orderBy(staleBranches, ["name"]), 2);

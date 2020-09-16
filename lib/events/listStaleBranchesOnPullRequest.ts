@@ -36,10 +36,11 @@ export const handler: EventHandler<
 
 	const repositoryState = repositoryStates.repositories[slug] || {
 		staleBranches: [],
+		pullRequests: {},
 		id: 0,
 	};
 
-	await listStaleBranchesOnRepo(
+	repositoryStates.repositories[slug] = await listStaleBranchesOnRepo(
 		cfg,
 		ctx,
 		{
@@ -49,9 +50,11 @@ export const handler: EventHandler<
 			defaultBranch: pr.repo.defaultBranch,
 			channels: pr.repo.channels?.map(c => c.name) || [],
 		},
-		`${ctx.skill.namespace}/${ctx.skill.name}/${pr.repo.owner}/${pr.repo.name}/${cfg.name}/${repositoryState.id}`,
+		undefined,
 		repositoryState,
 	);
+
+	await state.save(repositoryStates, cfg.name, ctx);
 
 	return status.success(
 		`Processed stale branches on ${pr.repo.owner}/${pr.repo.name}`,
