@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Add audit log for schedule. [67b7cde](https://github.com/atomist-skills/github-branch-deletion-skill/commit/67b7cde1493eb96c31e254eabde22512b06a243c)
+-   Trigger listing on PR and deleted branch events. [468890f](https://github.com/atomist-skills/github-branch-deletion-skill/commit/468890ff6db4bb36096cdbcdddc4a4c075480004)
 
 ## [2.0.10](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.9...2.0.10) - 2020-09-13
 
