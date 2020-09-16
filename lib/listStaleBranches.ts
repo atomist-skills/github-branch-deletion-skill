@@ -409,9 +409,11 @@ ${text}`,
 						} \u00B7 ${slack.url(
 							`https://go.atomist.com/${
 								ctx.workspaceId
-							}/manage/skills/configure/${
-								ctx.skill.id
-							}/${encodeURIComponent(cfg.name)}`,
+							}/manage/skills/configure/edit/${
+								ctx.skill.namespace
+							}/${ctx.skill.name}/${encodeURIComponent(
+								cfg.name,
+							)}`,
 							"Configure",
 						)}`,
 					},
