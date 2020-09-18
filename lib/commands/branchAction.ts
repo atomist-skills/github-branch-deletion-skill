@@ -72,15 +72,15 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 	switch (params.action) {
 		case "ignore":
 			await ignoreBranch(params, cfg, ctx);
-			msg = `Added branch _${params.branch}_ to ignore list`;
+			msg = `Added branch ${params.branch} to ignore list`;
 			break;
 		case "delete":
 			await deleteBranch(params, cfg, ctx);
-			msg = `Deleted branch _${params.branch}_`;
+			msg = `Deleted branch ${params.branch}`;
 			break;
 		case "raise_pr":
 			await raisePr(params, cfg, ctx);
-			msg = `Raised PR for branch _${params.branch}_`;
+			msg = `Raised PR for branch ${params.branch}`;
 			break;
 	}
 
