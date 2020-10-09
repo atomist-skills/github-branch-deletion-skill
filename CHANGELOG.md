@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.11...HEAD)
 
+### Added
+
+-   Add command intent to run stale branch cleanup on demand. [#68](https://github.com/atomist-skills/github-branch-deletion-skill/issues/68)
+
 ## [2.0.11](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.0.10...2.0.11) - 2020-09-16
 
 ### Added
