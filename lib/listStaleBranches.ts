@@ -15,6 +15,7 @@
  */
 
 import {
+	CommandContext,
 	Contextual,
 	EventContext,
 	github,
@@ -491,14 +492,17 @@ ${text}`,
 				elements: paging,
 			} as slack.ActionsBlock);
 		}
-
-		await ctx.message.send(
-			msg,
-			{
-				channels: repo.channels,
-			},
-			{ id },
-		);
+		if (repo.channels.length > 0) {
+			await ctx.message.send(
+				msg,
+				{
+					channels: repo.channels,
+				},
+				{ id },
+			);
+		} else {
+			await ((ctx as any) as CommandContext).message.respond(msg, { id });
+		}
 	} else if (msgId) {
 		await ctx.message.delete({ channels: repo.channels }, { id: msgId });
 	}

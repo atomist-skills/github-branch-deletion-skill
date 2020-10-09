@@ -95,5 +95,12 @@ export const Skill = skill<
 		},
 	},
 
-	subscriptions: ["file://graphql/subscription/*.graphql"],
+	commands: [
+		{
+			name: "listAction",
+			description: "List stale branches for provided repositories",
+			displayName: "List stale branches",
+			pattern: /^list stale branches.*$/,
+		},
+	],
 });
