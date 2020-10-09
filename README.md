@@ -32,6 +32,11 @@ automatically deletes branches for you once a pull request is merged or closed.
     request
 -   Your choice of deletion policy — merge or close and merge
 
+Additionally, this skill can list stale branches in chat and offer to clean up
+those branches. This is triggered on a daily schedule and will post stale
+branches to linked channels or manually via running
+`@atomist list stale branches` from chat.
+
 # Branches deleted, automatically, every time.
 
 ![Branch deleted](docs/images/pr-branch-deleted.png)
