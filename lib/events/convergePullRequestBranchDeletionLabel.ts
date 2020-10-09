@@ -76,7 +76,7 @@ export const handler: EventHandler<
 	if (!pr.labels.some(l => l.name.startsWith("auto-branch-delete:"))) {
 		labels.push(
 			`auto-branch-delete:${
-				ctx.configuration[0]?.parameters?.deleteOn || "on-merge"
+				ctx.configuration?.parameters?.deleteOn || "on-merge"
 			}`,
 		);
 	}

@@ -26,7 +26,7 @@ export const handler: EventHandler<
 	ListStaleBranchesOnPullRequestSubscription,
 	DeleteBranchConfiguration
 > = async ctx => {
-	const cfg = ctx.configuration?.[0];
+	const cfg = ctx.configuration;
 	const pr = ctx.data.PullRequest[0];
 	const slug = `${pr.repo.owner}/${pr.repo.name}`;
 

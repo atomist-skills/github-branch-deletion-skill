@@ -64,7 +64,7 @@ export async function listStateBranches(
 		repository.matchesFilter(
 			r.id,
 			r.org.id,
-			ctx.configuration?.[0]?.name,
+			ctx.configuration?.name,
 			"repos",
 			ctx,
 		),
@@ -109,7 +109,7 @@ export async function listStateBranches(
 
 export async function listStaleBranchesOnRepo(
 	cfg: { parameters: DeleteBranchConfiguration; name: string },
-	ctx: Contextual<any, DeleteBranchConfiguration>,
+	ctx: Contextual<any, any>,
 	repo: {
 		owner: string;
 		name: string;

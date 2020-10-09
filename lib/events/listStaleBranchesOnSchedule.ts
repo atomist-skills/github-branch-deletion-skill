@@ -23,6 +23,6 @@ export const handler: EventHandler<
 	ListStaleBranchesOnScheduleSubscription,
 	DeleteBranchConfiguration
 > = async ctx => {
-	const cfg = ctx.configuration?.[0];
+	const cfg = ctx.configuration;
 	return listStateBranches(cfg, ctx);
 };

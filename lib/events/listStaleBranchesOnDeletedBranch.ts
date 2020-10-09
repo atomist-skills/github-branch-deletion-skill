@@ -26,7 +26,7 @@ export const handler: EventHandler<
 	ListStaleBranchesOnDeletedBranchSubscription,
 	DeleteBranchConfiguration
 > = async ctx => {
-	const cfg = ctx.configuration?.[0];
+	const cfg = ctx.configuration;
 	const db = ctx.data.DeletedBranch[0];
 	const slug = `${db.repo.owner}/${db.repo.name}`;
 
