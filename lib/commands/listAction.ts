@@ -22,7 +22,6 @@ import {
 	status,
 	state,
 } from "@atomist/skill";
-import { RepositoryProviderType } from "@atomist/skill/src/lib/repository/id";
 import { DeleteBranchConfiguration } from "../configuration";
 import {
 	listStaleBranchesOnRepo,
@@ -83,7 +82,7 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 				repo: r.name,
 				apiUrl: r.org?.provider?.apiUrl,
 				branch: r.defaultBranch,
-				type: RepositoryProviderType.GitHubCom,
+				type: repository.RepositoryProviderType.GitHubCom,
 				repoId: r.id,
 				ownerId: r.org?.id,
 			})),
