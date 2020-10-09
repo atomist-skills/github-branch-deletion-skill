@@ -60,7 +60,7 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 					ctx,
 				),
 			);
-			return status.failure("No repository provided");
+			return status.success("No repository provided").hidden();
 		}
 	} else {
 		// Get all repos in this workspace
@@ -101,9 +101,9 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 				ctx,
 			),
 		);
-		return status.failure(
-			"No repository selected after applying repository filter",
-		);
+		return status
+			.success("No repository selected after applying repository filter")
+			.hidden();
 	}
 
 	const repositoryState = await state.hydrate<{
