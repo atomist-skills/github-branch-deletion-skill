@@ -56,7 +56,7 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 			await ctx.message.respond(
 				slack.infoMessage(
 					"List Stale Branches",
-					"No repository provided.\n\nEither run this command from a linked channel or provide a regular expression to match repository slugs via the `--repo` parameter.",
+					"No repository provided.\n\nEither run this command from a linked channel or provide a regular expression to match repository slugs via the `--repos` parameter.",
 					ctx,
 				),
 			);
