@@ -31,7 +31,7 @@ export const Skill = skill<
 	namespace: "atomist",
 	displayName: "Auto-Delete Branches",
 	author: "Atomist",
-	categories: [Category.CodeReview, Category.ProjectManagement],
+	categories: [Category.RepoManagement],
 	license: "Apache-2.0",
 
 	runtime: {
