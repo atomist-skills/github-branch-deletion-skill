@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.1.1...HEAD)
 
+### Fixed
+
+-   Always list all branches on listAction command. [dbc3f5a](https://github.com/atomist-skills/github-branch-deletion-skill/commit/dbc3f5a56234f31e3bc567c64397905256dc6a69)
+
 ## [2.1.1](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.1.0...2.1.1) - 2020-10-15
 
 ### Fixed
