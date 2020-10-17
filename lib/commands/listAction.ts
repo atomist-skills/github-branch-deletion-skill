@@ -21,6 +21,7 @@ import {
 	prompt,
 	status,
 	state,
+	guid,
 } from "@atomist/skill";
 import { DeleteBranchConfiguration } from "../configuration";
 import {
@@ -31,6 +32,7 @@ import {
 	RepositoriesQuery,
 	RepositoriesQueryVariables,
 } from "../typings/types";
+import * as _ from "lodash";
 
 export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 	const parameters = await prompt.configurationWithParameters<
@@ -121,7 +123,7 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 				defaultBranch: repository.branch,
 				channels: [],
 			},
-			undefined,
+			guid(),
 			repositoryState.repositories[
 				`${repository.owner}/${repository.repo}`
 			] || {
