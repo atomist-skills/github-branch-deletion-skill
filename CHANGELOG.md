@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Use type generation in @atomist/skill. [c8423e7](https://github.com/atomist-skills/github-branch-deletion-skill/commit/c8423e748fb34cc17e65ef98c77377d9ddcbc136)
+-   Update skill icon. [6d16c05](https://github.com/atomist-skills/github-branch-deletion-skill/commit/6d16c05a41e9e4ffed359b08388b9eb525ec2e78)
 
 ## [2.1.2](https://github.com/atomist-skills/github-branch-deletion-skill/compare/2.1.1...2.1.2) - 2020-10-17
 
