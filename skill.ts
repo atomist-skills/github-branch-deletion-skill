@@ -30,9 +30,10 @@ export const Skill = skill<
 	name: "github-branch-deletion-skill",
 	namespace: "atomist",
 	displayName: "Auto-Delete Branches",
-	author: "Atomist",
+	description: "Delete pull request branches when a pull request is closed",
 	categories: [Category.RepoManagement],
-	license: "Apache-2.0",
+	iconUrl:
+		"https://raw.githubusercontent.com/atomist-skills/github-branch-deletion-skill/main/docs/images/icon.svg",
 
 	runtime: {
 		memory: 1024,
