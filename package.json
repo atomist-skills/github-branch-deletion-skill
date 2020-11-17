@@ -51,7 +51,6 @@
   },
   "dependencies": {
     "@atomist/skill": "^0.5.1",
-    "@supercharge/promise-pool": "^1.6.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
     "moment-duration-format": "^2.3.2"
