@@ -1,63 +1,81 @@
 # `atomist/github-branch-deletion-skill`
 
-<!---atomist-skill-description:start--->
+Delete pull request branches when a pull request is closed.
 
-Delete pull request branches when a pull request is closed
+:sparkles: [_**View this skill in the Atomist Skills Catalog**_][atomist-skill]
+to enable this skill on your repositories. :sparkles:
 
-<!---atomist-skill-description:end--->
+See the [Atomist website][atomist] for general information about Atomist Skills
+and the [Atomist documentation site][atomist-doc] for instructions on how to get
+started using Atomist Skills.
 
----
+[atomist-skill]:
+    https://go.atomist.com/catalog/skills/atomist/github-branch-deletion-skill
+    "Atomist Skills Catalog - Automate All Your Software Tasks"
+[atomist-doc]: https://docs.atomist.com/ "Atomist Documentation"
 
-<!---atomist-skill-long_description:start--->
+## Contributing
 
-Automatically delete pull request branches when a pull request is closed. No
-more dangling branches cluttering up your repositories, and no need to manually
-delete branches. Use this skill to automatically delete branches when pull
-requests are closed or closed merged.
+Contributions to this project from community members are encouraged and
+appreciated. Please review the [Contributing Guidelines](CONTRIBUTING.md) for
+more information. Also see the [Development](#development) section in this
+document.
 
-<!---atomist-skill-long_description:end--->
+## Code of conduct
 
----
+This project is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). You are
+expected to act in accordance with this code by participating. Please report any
+unacceptable behavior to code-of-conduct@atomist.com.
 
-<!---atomist-skill-readme:start--->
+## Connect
 
-Never manually delete branches again. Is cleaning up branches after pull
-requests are merged or closed a completely neglected task? This skill
-automatically deletes branches for you once a pull request is merged or closed.
+Follow [@atomist][atomist-twitter] on Twitter and [The Atomist
+Blog][atomist-blog].
 
--   Automatic branch deletion, no manual steps
--   Works across as many repositories as you want
--   Track pull request branch status in your chat channel of choice
--   Skip branch deletion when needed, simply remove the label from the pull
-    request
--   Your choice of deletion policy — merge or close and merge
+[atomist-twitter]: https://twitter.com/atomist "Atomist on Twitter"
+[atomist-blog]: https://blog.atomist.com/ "The Atomist Blog"
 
-Additionally, this skill can list stale branches in chat and offer to clean up
-those branches. This is triggered on a daily schedule and will post stale
-branches to linked channels or manually via running
-`@atomist list stale branches` from chat.
+## Support
 
-# Branches deleted, automatically, every time.
+General support questions should be discussed in the `#support` channel in the
+[Atomist community Slack workspace][slack].
 
-![Branch deleted](docs/images/pr-branch-deleted.png)
+If you find a problem, please create an [issue](../../issues).
 
-# Track pull request branch status in chat.
+## Development
 
-![Branch status in chat](docs/images/branch-status-chat.png)
+You will need to install [Node.js][node] to build and test this project.
 
-# Choose the deletion policy that works for you.
+[node]: https://nodejs.org/ "Node.js"
 
-![Choose branch deletion policy](docs/images/deletion-policy.png)
+### Build and test
 
-See the [code](https://github.com/atomist-skills/github-branch-deletion-skill)
-for the skill. To create feature requests or bug reports, create an
-[issue in the repository](https://github.com/atomist-skills/github-branch-deletion-skill/issues).
+Install dependencies.
 
-<!---atomist-skill-readme:end--->
+```
+$ npm ci
+```
+
+Use the `build` package script to compile, test, lint, and build the
+documentation.
+
+```
+$ npm run build
+```
+
+### Release
+
+Releases are created by pushing a release [semantic version][semver] tag to the
+repository, Atomist Skills take care of the rest.
+
+To make this skill globally available, set its maturity to "stable" via the set
+maturity drop-down in its Atomist Community Slack channel.
+
+[semver]: https://semver.org/ "Semantic Version"
 
 ---
 
 Created by [Atomist][atomist]. Need Help? [Join our Slack workspace][slack].
 
-[atomist]: https://atomist.com/ "Atomist - How Teams Deliver Software"
+[atomist]: https://atomist.com/ "Atomist - Automate All the Software Things"
 [slack]: https://join.atomist.com/ "Atomist Community Slack"
