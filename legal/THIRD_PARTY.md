@@ -21,7 +21,7 @@ This page details all runtime dependencies of `@atomist/github-branch-deletion-s
 | [GPL-3.0](#gpl-30)              | 1     |
 | [ISC](#isc)                     | 49    |
 | [MIT AND Zlib](#mit-and-zlib)   | 1     |
-| [MIT](#mit)                     | 581   |
+| [MIT](#mit)                     | 579   |
 | [Public Domain](#public-domain) | 1     |
 | [Unlicense](#unlicense)         | 1     |
 
@@ -355,8 +355,6 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 | `@octokit/types`                                     | `5.5.0`        |                                | [https://github.com/octokit/types.ts](https://github.com/octokit/types.ts)                                                                                                                                     |
 | `@samverschueren/stream-to-observable`               | `0.3.1`        |                                | [https://github.com/SamVerschueren/stream-to-observable](https://github.com/SamVerschueren/stream-to-observable)                                                                                               |
 | `@sindresorhus/is`                                   | `0.14.0`       | Sindre Sorhus                  | [https://github.com/sindresorhus/is](https://github.com/sindresorhus/is)                                                                                                                                       |
-| `@supercharge/goodies`                               | `1.5.1`        | Marcus Pöhls                   | [https://github.com/supercharge/goodies](https://github.com/supercharge/goodies)                                                                                                                               |
-| `@supercharge/promise-pool`                          | `1.6.0`        | Marcus Pöhls                   | [https://github.com/superchargejs/promise-pool](https://github.com/superchargejs/promise-pool)                                                                                                                 |
 | `@szmarczak/http-timer`                              | `1.1.2`        | Szymon Marczak                 | [https://github.com/szmarczak/http-timer](https://github.com/szmarczak/http-timer)                                                                                                                             |
 | `@tootallnate/once`                                  | `1.1.2`        | Nathan Rajlich                 | [https://github.com/TooTallNate/once](https://github.com/TooTallNate/once)                                                                                                                                     |
 | `@types/color-name`                                  | `1.1.1`        |                                | [https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)                                                                                                       |
