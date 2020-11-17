@@ -32,7 +32,6 @@ import {
 	RepositoriesQuery,
 	RepositoriesQueryVariables,
 } from "../typings/types";
-import * as _ from "lodash";
 
 export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 	const parameters = await prompt.configurationWithParameters<
