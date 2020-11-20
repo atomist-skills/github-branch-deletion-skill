@@ -364,9 +364,7 @@ No commits on the following${
 						}
 ${text}`,
 					},
-					accessory: slack.block.elementForCommand<
-						slack.StaticOptionElement
-					>(
+					accessory: slack.block.elementForCommand<slack.StaticOptionElement>(
 						{
 							type: "overflow",
 							options,
