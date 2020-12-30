@@ -16,13 +16,14 @@
 
 import {
 	CommandHandler,
+	guid,
+	prompt,
 	repository,
 	slack,
-	prompt,
-	status,
 	state,
-	guid,
+	status,
 } from "@atomist/skill";
+
 import { DeleteBranchConfiguration } from "../configuration";
 import {
 	listStaleBranchesOnRepo,

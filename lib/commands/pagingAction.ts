@@ -15,6 +15,7 @@
  */
 
 import { CommandHandler, state, status } from "@atomist/skill";
+
 import { DeleteBranchConfiguration } from "../configuration";
 import {
 	listStaleBranchesOnRepo,

@@ -26,6 +26,7 @@ import {
 	status,
 } from "@atomist/skill";
 import * as _ from "lodash";
+
 import { DeleteBranchConfiguration } from "../configuration";
 import {
 	listStaleBranchesOnRepo,

@@ -15,6 +15,7 @@
  */
 
 import { EventHandler } from "@atomist/skill";
+
 import { DeleteBranchConfiguration } from "../configuration";
 import { listStateBranches } from "../listStaleBranches";
 import { ListStaleBranchesOnScheduleSubscription } from "../typings/types";
