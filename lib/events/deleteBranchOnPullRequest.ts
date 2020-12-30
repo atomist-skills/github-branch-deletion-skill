@@ -16,12 +16,13 @@
 
 import {
 	EventHandler,
+	github,
 	log,
 	repository,
 	secret,
-	github,
 	status,
 } from "@atomist/skill";
+
 import { DeleteBranchConfiguration } from "../configuration";
 import { DeleteBranchOnPullRequestSubscription } from "../typings/types";
 
