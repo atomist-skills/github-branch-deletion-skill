@@ -35,7 +35,7 @@ export const handler: EventHandler<
 	const slug = `${owner}/${name}#${pr.number}`;
 	const link = `[${slug}](${pr.url})`;
 
-	await ctx.audit.log(
+	log.info(
 		`Starting auto-branch deletion for pull request ${slug} with labels: ${pr.labels
 			.map(l => l.name)
 			.join(", ")}`,
@@ -46,10 +46,10 @@ export const handler: EventHandler<
 		!!pr.merged &&
 		pr.labels.some(l => l.name === "auto-branch-delete:on-merge")
 	) {
-		await ctx.audit.log(`Pull request ${slug} merged. Deleting branch...`);
+		log.info(`Pull request ${slug} merged. Deleting branch...`);
 		deletePr = true;
 	} else if (pr.labels.some(l => l.name === "auto-branch-delete:on-close")) {
-		await ctx.audit.log(`Pull request ${slug} closed. Deleting branch...`);
+		log.info(`Pull request ${slug} closed. Deleting branch...`);
 		deletePr = true;
 	}
 
@@ -71,7 +71,7 @@ export const handler: EventHandler<
 					repo: pr.repo.name,
 					ref: `heads/${pr.branchName}`,
 				});
-				await ctx.audit.log(
+				log.info(
 					`Pull request ${slug} branch ${pr.branchName} deleted`,
 				);
 				return status.success(
@@ -79,9 +79,8 @@ export const handler: EventHandler<
 				);
 			} catch (e) {
 				log.warn(`Failed to delete branch: ${e.message}`);
-				await ctx.audit.log(
+				log.warn(
 					`Pull request ${link} branch ${pr.branchName} failed to delete`,
-					log.Severity.Error,
 				);
 				return status.success(
 					`Pull request ${link} branch ${pr.branchName} failed to delete`,
@@ -90,7 +89,7 @@ export const handler: EventHandler<
 		}
 	}
 
-	await ctx.audit.log(`Pull request ${link} branch deletion not requested`);
+	log.info(`Pull request ${link} branch deletion not requested`);
 	return status
 		.success(`Pull request ${link} branch deletion not requested`)
 		.hidden();

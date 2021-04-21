@@ -92,7 +92,13 @@ export const handler: CommandHandler<DeleteBranchConfiguration> = async ctx => {
 	}
 
 	const filteredRepositories = requestedRepositories.filter(r =>
-		repository.matchesFilter(r.repoId, r.ownerId, cfg.name, "repos", ctx),
+		repository.matchesRepoFilter(
+			r.repoId,
+			r.ownerId,
+			cfg.name,
+			"repos",
+			ctx,
+		),
 	);
 
 	if (filteredRepositories.length === 0) {

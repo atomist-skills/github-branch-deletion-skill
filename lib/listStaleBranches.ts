@@ -20,6 +20,7 @@ import {
 	EventContext,
 	github,
 	HandlerStatus,
+	log,
 	repository,
 	secret,
 	slack,
@@ -63,7 +64,7 @@ export async function listStateBranches(
 		RepositoriesQueryVariables
 	>("repositories.graphql");
 	const filteredRepos = repos.Repo.filter(r =>
-		repository.matchesFilter(
+		repository.matchesRepoFilter(
 			r.id,
 			r.org.id,
 			ctx.configuration?.name,
@@ -124,7 +125,7 @@ export async function listStaleBranchesOnRepo(
 	page = 0,
 ): Promise<RepositoryBranchState> {
 	const slug = `${repo.owner}/${repo.name}`;
-	await ctx.audit.log(`Processing stale branches for ${slug}`);
+	log.info(`Processing stale branches for ${slug}`);
 
 	const threshold = cfg.parameters.staleThreshold || 7;
 	const branchFilters = cfg.parameters.staleExcludes || [];
@@ -243,7 +244,7 @@ export async function listStaleBranchesOnRepo(
 			_.isEqual(newBranches, repositoryState.staleBranches || []) &&
 			_.isEqual(newPullRequests, repositoryState.pullRequests || {})
 		) {
-			await ctx.audit.log(`No new stale branches found`);
+			log.info(`No new stale branches found`);
 			return repositoryState;
 		}
 		repositoryState.staleBranches = newBranches;
@@ -253,7 +254,7 @@ export async function listStaleBranchesOnRepo(
 	const branchPages = _.chunk(_.orderBy(staleBranches, ["name"]), 2);
 
 	if (staleBranches.length > 0) {
-		await ctx.audit.log(
+		log.info(
 			`Found following stale branches: ${staleBranches
 				.map(b => b.branch)
 				.join(", ")}`,

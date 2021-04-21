@@ -17,6 +17,7 @@
 import {
 	EventHandler,
 	github,
+	log,
 	repository,
 	secret,
 	status,
@@ -35,7 +36,7 @@ export const handler: EventHandler<
 	const pr = ctx.data.PullRequest[0];
 
 	if (pr.action !== PullRequestAction.Opened) {
-		await ctx.audit.log(
+		log.info(
 			`Pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} action not opened. Ignoring...`,
 		);
 
@@ -52,7 +53,7 @@ export const handler: EventHandler<
 		secret.gitHubAppToken({ owner, repo: name }),
 	);
 
-	await ctx.audit.log(`Converging auto-branch deletion label`);
+	log.info(`Converging auto-branch deletion label`);
 
 	const id = repository.gitHub({
 		owner: repo.owner,
@@ -82,7 +83,7 @@ export const handler: EventHandler<
 		);
 	}
 
-	await ctx.audit.log(
+	log.info(
 		`Labelling pull request ${pr.repo.owner}/${pr.repo.name}#${pr.number} with configured auto-branch deletion method`,
 	);
 
@@ -94,7 +95,7 @@ export const handler: EventHandler<
 		labels,
 	});
 
-	await ctx.audit.log(
+	log.info(
 		`Pull request ${pr.repo.owner}/${pr.repo.name}#${
 			pr.number
 		} labelled with: ${labels.join(", ")}`,
