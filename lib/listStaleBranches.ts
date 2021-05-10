@@ -366,25 +366,26 @@ No commits on the following${
 						}
 ${text}`,
 					},
-					accessory: slack.block.elementForCommand<slack.StaticOptionElement>(
-						{
-							type: "overflow",
-							options,
-						} as slack.OverflowElement,
-						"branchAction",
-						{
-							name: repo.name,
-							owner: repo.owner,
-							branch: pr.branch,
-							cfg: cfg.name,
-							apiUrl: repo.apiUrl,
-							defaultBranch: repo.defaultBranch,
-							title: pr.commit?.message,
-							channels: JSON.stringify(repo.channels),
-							msgId: id,
-						},
-						"action",
-					),
+					accessory:
+						slack.block.elementForCommand<slack.StaticOptionElement>(
+							{
+								type: "overflow",
+								options,
+							} as slack.OverflowElement,
+							"branchAction",
+							{
+								name: repo.name,
+								owner: repo.owner,
+								branch: pr.branch,
+								cfg: cfg.name,
+								apiUrl: repo.apiUrl,
+								defaultBranch: repo.defaultBranch,
+								title: pr.commit?.message,
+								channels: JSON.stringify(repo.channels),
+								msgId: id,
+							},
+							"action",
+						),
 				} as slack.SectionBlock,
 				{
 					type: "context",
@@ -501,7 +502,7 @@ ${text}`,
 				{ id },
 			);
 		} else {
-			await ((ctx as any) as CommandContext).message.respond(msg, { id });
+			await (ctx as any as CommandContext).message.respond(msg, { id });
 		}
 	} else if (msgId) {
 		await ctx.message.delete({ channels: repo.channels }, { id: msgId });
